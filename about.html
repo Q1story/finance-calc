@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사이트 소개 — 금융계산소</title>
+<meta name="description" content="금융계산소는 연봉 실수령액, 퇴직금, 대출 상환, 예금·적금 이자를 무료로 계산할 수 있는 금융 계산기 모음 사이트입니다.">
+<meta property="og:title" content="사이트 소개 — 금융계산소">
+<meta property="og:description" content="연봉·퇴직금·대출·예적금 계산기를 제공하는 금융계산소를 소개합니다.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2420;
+  --ink-soft:#4c5a53;
+  --paper:#f5f6f2;
+  --card:#ffffff;
+  --bill:#0f4d3a;
+  --bill-2:#17694f;
+  --bill-tint:#e7efe9;
+  --gold:#b98a2e;
+  --line:#dce0d9;
+  --danger:#a4432e;
+  --radius:10px;
+  --sans:'Noto Sans KR',-apple-system,sans-serif;
+  --serif:'Noto Serif KR',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
+a{color:var(--bill-2)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
+.logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
+.logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
+.page-nav{display:flex;gap:18px}
+.page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
+.page-nav a:hover{color:#fff}
+.page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
+@media(max-width:560px){.page-nav{display:none}}
+
+main{padding:34px 0 60px}
+.page-title{font-family:var(--serif);font-size:1.8rem;font-weight:700;margin-bottom:4px}
+.page-desc{color:var(--ink-soft);font-size:.94rem;margin-bottom:22px}
+
+.content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+.content h2{font-family:var(--serif);font-size:1.2rem;margin:26px 0 10px;color:var(--bill)}
+.content h2:first-child{margin-top:0}
+.content h3{font-size:1rem;margin:18px 0 6px}
+.content p{font-size:.93rem;color:var(--ink);margin-bottom:10px}
+.content ul,.content ol{padding-left:22px;font-size:.93rem;margin-bottom:10px}
+.content li{margin-bottom:4px}
+
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0 20px}
+@media(max-width:560px){.tool-grid{grid-template-columns:1fr}}
+.tool-card{border:1px solid var(--line);border-radius:8px;padding:16px;text-decoration:none;display:block;transition:border-color .15s,background .15s}
+.tool-card:hover{border-color:var(--bill-2);background:var(--bill-tint)}
+.tool-card .name{font-weight:700;color:var(--ink);font-size:.98rem;margin-bottom:4px}
+.tool-card .desc{font-size:.84rem;color:var(--ink-soft)}
+
+footer{background:var(--ink);color:#aab3ad;font-size:.8rem;padding:26px 20px;text-align:center;line-height:1.7}
+footer strong{color:#d7ddd8}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <a class="logo" href="index.html">금융계산소<small>FINANCIAL CALCULATOR</small></a>
+    <nav class="page-nav" aria-label="사이트 메뉴">
+      <a href="index.html">계산기</a>
+      <a href="about.html" aria-current="page">소개</a>
+      <a href="privacy-policy.html">개인정보처리방침</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1 class="page-title">금융계산소 소개</h1>
+  <p class="page-desc">복잡한 급여명세서와 금융 계산을, 숫자만 입력하면 바로 확인할 수 있게.</p>
+
+  <article class="content">
+    <h2>왜 금융계산소를 만들었나요</h2>
+    <p>연봉 협상 자리에서 세전 금액만 듣고 실제 통장에 얼마가 들어오는지 헷갈렸던 경험, 퇴직금이 정확히 얼마인지 회사에 묻기 애매했던 경험은 누구에게나 있습니다. 금융계산소는 이런 계산을 <strong>4대보험 요율, 근로소득세 간이세액표, 법정 퇴직금 산식</strong> 등 실제 기준에 최대한 가깝게 반영해, 별도 가입이나 설치 없이 바로 확인할 수 있도록 만든 사이트입니다.</p>
+
+    <h2>제공하는 계산기</h2>
+    <div class="tool-grid">
+      <a class="tool-card" href="index.html">
+        <div class="name">연봉 실수령액</div>
+        <div class="desc">4대보험·소득세 반영 월 실수령액</div>
+      </a>
+      <a class="tool-card" href="index.html">
+        <div class="name">퇴직금</div>
+        <div class="desc">입사일·퇴사일 기준 법정 퇴직금</div>
+      </a>
+      <a class="tool-card" href="index.html">
+        <div class="name">대출 상환</div>
+        <div class="desc">원리금균등·원금균등·만기일시 비교</div>
+      </a>
+      <a class="tool-card" href="index.html">
+        <div class="name">예금·적금</div>
+        <div class="desc">이자소득세 반영 세후 수령액</div>
+      </a>
+    </div>
+
+    <h2>계산 결과, 어디까지 믿을 수 있나요</h2>
+    <p>모든 계산은 계산 시점의 공개된 세율·요율(국민연금, 건강보험, 고용보험, 소득세 간이세액표 근사식 등)을 기준으로 하며, 실제 급여명세서나 금융기관 안내와 소수점 단위까지 완전히 일치하지 않을 수 있습니다. 회사의 급여 규정, 연말정산 결과, 금융기관의 상품 약관에 따라 실제 금액은 달라질 수 있으므로, 본 사이트의 결과는 <strong>의사결정 전 참고용</strong>으로 활용해 주세요. 정확한 금액은 국세청 홈택스, 4대사회보험 정보연계센터, 해당 금융기관을 통해 확인하시기 바랍니다.</p>
+
+    <h2>개인정보는 어떻게 다루나요</h2>
+    <p>계산기에 입력하는 금액과 날짜는 <strong>이용자의 브라우저 안에서만 계산</strong>되며 서버로 전송되거나 저장되지 않습니다. 자세한 내용은 <a href="privacy-policy.html">개인정보처리방침</a>을 확인해 주세요.</p>
+
+    <h2>문의하기</h2>
+    <p>계산 결과에 오류를 발견하셨거나 추가되었으면 하는 계산기가 있다면 <a href="contact.html">문의 페이지</a>를 통해 알려주세요.</p>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>금융계산소</strong> · 본 사이트의 계산 결과는 참고용 간이 계산이며, 실제 금액은 회사 급여 규정·세법 개정·금융기관 정책에 따라 달라질 수 있습니다.<br>
+    <a href="index.html">계산기</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="contact.html">문의</a>
+  </div>
+</footer>
+
+</body>
+</html>
