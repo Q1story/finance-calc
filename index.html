@@ -529,8 +529,22 @@ function calcSalary() {
   const mode = segValue('sal-mode');
   const amount = val('sal-amount');
   const taxFreeM = val('sal-taxfree');
-  const family = Math.max(1, val('sal-family'));
+  const family = val('sal-family');
   const children = val('sal-child');
+  const salRowIds = ['r-gross','r-np','r-hi','r-lt','r-ei','r-it','r-lit','r-ded'];
+
+  if (amount <= 0) {
+    set('sal-net', '금액을 입력해주세요');
+    set('sal-year-net', '');
+    salRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+  if (taxFreeM < 0 || family < 1 || children < 0) {
+    set('sal-net', '입력값을 확인해주세요');
+    set('sal-year-net', '비과세액은 0원 이상, 부양가족 수는 1명 이상이어야 합니다.');
+    salRowIds.forEach(id => set(id, '—'));
+    return;
+  }
 
   const grossYear = mode === 'year' ? amount : amount * 12;
   const grossMonth = grossYear / 12;
@@ -589,9 +603,26 @@ document.getElementById('sal-run').addEventListener('click', calcSalary);
 function calcSeverance() {
   const inD = new Date(document.getElementById('sev-in').value);
   const outD = new Date(document.getElementById('sev-out').value);
-  if (isNaN(inD) || isNaN(outD) || outD <= inD) {
+  const pay3 = val('sev-pay3');
+  const bonus = val('sev-bonus');
+  const leave = val('sev-leave');
+
+  if (isNaN(inD) || isNaN(outD)) {
+    set('sev-total', '날짜를 입력해주세요');
+    set('sev-days', '입사일과 퇴사일을 모두 입력해주세요.');
+    set('sv-d', '—'); set('sv-avg', '—');
+    return;
+  }
+  if (outD <= inD) {
     set('sev-total', '날짜 확인');
     set('sev-days', '퇴사일이 입사일보다 뒤여야 합니다.');
+    set('sv-d', '—'); set('sv-avg', '—');
+    return;
+  }
+  if (pay3 <= 0 || bonus < 0 || leave < 0) {
+    set('sev-total', '입력값을 확인해주세요');
+    set('sev-days', '급여·상여금·연차수당은 0 이상이어야 합니다.');
+    set('sv-d', '—'); set('sv-avg', '—');
     return;
   }
   const days = Math.round((outD - inD) / 86400000);
@@ -601,9 +632,8 @@ function calcSeverance() {
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
   const periodDays = Math.round((outD - threeMonthsAgo) / 86400000);
 
-  const pay3 = val('sev-pay3');
-  const bonusPortion = val('sev-bonus') * 3 / 12;
-  const leavePortion = val('sev-leave') * 3 / 12;
+  const bonusPortion = bonus * 3 / 12;
+  const leavePortion = leave * 3 / 12;
   const avgDaily = (pay3 + bonusPortion + leavePortion) / periodDays;
   const total = avgDaily * 30 * (days / 365);
 
@@ -619,10 +649,26 @@ bindSeg('loan-mode');
 
 function calcLoan() {
   const P = val('loan-amt');
-  const r = val('loan-rate') / 100 / 12;
-  const n = val('loan-years') * 12;
+  const rateInput = val('loan-rate');
+  const years = val('loan-years');
   const mode = segValue('loan-mode');
-  if (P <= 0 || n <= 0) return;
+  const loanRowIds = ['ln-p','ln-i','ln-t'];
+
+  if (P <= 0) {
+    set('loan-monthly', '금액을 입력해주세요');
+    set('loan-sub', '');
+    loanRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+  if (rateInput < 0 || years <= 0) {
+    set('loan-monthly', '입력값을 확인해주세요');
+    set('loan-sub', '이자율은 0 이상, 기간은 1년 이상이어야 합니다.');
+    loanRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+
+  const r = rateInput / 100 / 12;
+  const n = years * 12;
 
   let firstMonthly, totalInterest, cap = '월 상환금', sub = '';
 
@@ -665,11 +711,25 @@ bindSeg('sav-mode', v => {
 function calcSavings() {
   const mode = segValue('sav-mode');
   const amt = val('sav-amt');
-  const rate = val('sav-rate') / 100;
+  const rateInput = val('sav-rate');
   const months = val('sav-months');
   const taxRate = Number(document.getElementById('sav-tax').value);
-  if (amt <= 0 || months <= 0) return;
+  const savRowIds = ['sv-p','sv-i','sv-t','sv-ni'];
 
+  if (amt <= 0) {
+    set('sav-total', mode === 'deposit' ? '예치 금액을 입력해주세요' : '월 납입액을 입력해주세요');
+    set('sav-sub', '');
+    savRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+  if (rateInput < 0 || months <= 0) {
+    set('sav-total', '입력값을 확인해주세요');
+    set('sav-sub', '이자율은 0 이상, 기간은 1개월 이상이어야 합니다.');
+    savRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+
+  const rate = rateInput / 100;
   let principal, interest;
   if (mode === 'deposit') {
     principal = amt;
