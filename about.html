@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>사이트 소개 — 단숨</title>
-<meta name="description" content="단숨은 연봉 실수령액, 퇴직금, 대출 상환, 예금·적금 이자 등 생활에 필요한 계산기를 무료로 제공하는 도구 모음 사이트입니다.">
+<meta name="description" content="단숨은 연봉·퇴직금·대출·예적금부터 날짜, 텍스트, 단위 변환, 건강까지 생활에 필요한 계산기를 무료로 제공하는 도구 모음 사이트입니다.">
 <meta property="og:title" content="사이트 소개 — 단숨">
-<meta property="og:description" content="연봉·퇴직금·대출·예적금 계산기를 비롯해 생활에 필요한 도구를 제공하는 단숨을 소개합니다.">
+<meta property="og:description" content="연봉·재무부터 날짜·텍스트·단위 변환·생활건강까지, 생활에 필요한 도구를 제공하는 단숨을 소개합니다.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4d3a'/%3E%3Cpath d='M38 6 16 36h12l-4 22 24-30H36z' fill='%23b98a2e'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,11 +38,25 @@ header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-sh
 .head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
 .logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
 .logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
-.page-nav{display:flex;gap:18px}
+.page-nav{display:flex;align-items:center;gap:18px}
 .page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
 .page-nav a:hover{color:#fff}
 .page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
-@media(max-width:560px){.page-nav{display:none}}
+.nav-drop{position:relative}
+.nav-drop summary{cursor:pointer;list-style:none;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-drop summary::-webkit-details-marker{display:none}
+.nav-drop summary::after{content:" ▾";font-size:.7em}
+.nav-drop summary:hover{color:#fff}
+.nav-drop[open] summary{color:#fff}
+.drop-menu{position:absolute;top:100%;right:0;margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:150px;z-index:60}
+.drop-menu a{display:block;padding:9px 12px;border-radius:6px;color:var(--ink)!important;text-decoration:none;font-size:.88rem;font-weight:500}
+.drop-menu a:hover{background:var(--bill-tint);color:var(--bill)!important}
+.drop-menu a[aria-current="page"]{color:var(--bill)!important;font-weight:700;background:var(--bill-tint)}
+@media(max-width:560px){
+  .head-inner{padding:12px 14px}
+  .page-nav{gap:10px}
+  .page-nav a,.nav-drop summary{font-size:.78rem}
+}
 
 main{padding:34px 0 60px}
 .page-title{font-family:var(--serif);font-size:1.8rem;font-weight:700;margin-bottom:4px}
@@ -74,7 +88,17 @@ footer strong{color:#d7ddd8}
   <div class="head-inner">
     <a class="logo" href="index.html">단숨<small>DANSUM</small></a>
     <nav class="page-nav" aria-label="사이트 메뉴">
-      <a href="index.html">계산기</a>
+      <details class="nav-drop">
+        <summary>계산기</summary>
+        <div class="drop-menu">
+          <a href="index.html">전체 도구</a>
+          <a href="finance.html">연봉·재무</a>
+          <a href="date.html">날짜·시간</a>
+          <a href="text.html">텍스트·문서</a>
+          <a href="unit.html">단위 변환</a>
+          <a href="life.html">생활·건강</a>
+        </div>
+      </details>
       <a href="about.html" aria-current="page">소개</a>
       <a href="contact.html">문의</a>
     </nav>
@@ -87,30 +111,34 @@ footer strong{color:#d7ddd8}
 
   <article class="content">
     <h2>왜 단숨을 만들었나요</h2>
-    <p>연봉 협상 자리에서 세전 금액만 듣고 실제 통장에 얼마가 들어오는지 헷갈렸던 경험, 퇴직금이 정확히 얼마인지 회사에 묻기 애매했던 경험은 누구에게나 있습니다. 단숨은 이런 계산을 <strong>4대보험 요율, 근로소득세 간이세액표, 법정 퇴직금 산식</strong> 등 실제 기준에 최대한 가깝게 반영해, 별도 가입이나 설치 없이 바로 확인할 수 있도록 만든 사이트입니다. 지금은 금융 계산기를 중심으로 제공하고 있으며, 앞으로 날짜·단위 변환 등 생활 전반에 필요한 도구를 순차적으로 추가할 예정입니다.</p>
+    <p>연봉 협상 자리에서 세전 금액만 듣고 실제 통장에 얼마가 들어오는지 헷갈렸던 경험, 계약 만료일이나 나이를 손으로 세어보다 헷갈렸던 경험은 누구에게나 있습니다. 단숨은 이런 계산을 <strong>4대보험 요율, 근로소득세 간이세액표, 법정 퇴직금 산식</strong> 등 실제 기준에 최대한 가깝게 반영해, 별도 가입이나 설치 없이 바로 확인할 수 있도록 만든 생활 도구 모음 사이트입니다.</p>
 
     <h2>제공하는 계산기</h2>
     <div class="tool-grid">
-      <a class="tool-card" href="index.html">
-        <div class="name">연봉 실수령액</div>
-        <div class="desc">4대보험·소득세 반영 월 실수령액</div>
+      <a class="tool-card" href="finance.html">
+        <div class="name">연봉·재무</div>
+        <div class="desc">연봉 실수령액·퇴직금·대출·예적금</div>
       </a>
-      <a class="tool-card" href="index.html">
-        <div class="name">퇴직금</div>
-        <div class="desc">입사일·퇴사일 기준 법정 퇴직금</div>
+      <a class="tool-card" href="date.html">
+        <div class="name">날짜·시간</div>
+        <div class="desc">D-Day·날짜 계산·기간·나이 계산</div>
       </a>
-      <a class="tool-card" href="index.html">
-        <div class="name">대출 상환</div>
-        <div class="desc">원리금균등·원금균등·만기일시 비교</div>
+      <a class="tool-card" href="text.html">
+        <div class="name">텍스트·문서</div>
+        <div class="desc">글자수 세기·텍스트 변환</div>
       </a>
-      <a class="tool-card" href="index.html">
-        <div class="name">예금·적금</div>
-        <div class="desc">이자소득세 반영 세후 수령액</div>
+      <a class="tool-card" href="unit.html">
+        <div class="name">단위 변환</div>
+        <div class="desc">길이·무게·온도·부피</div>
+      </a>
+      <a class="tool-card" href="life.html">
+        <div class="name">생활·건강</div>
+        <div class="desc">BMI·기초대사량·알바 급여</div>
       </a>
     </div>
 
     <h2>계산 결과, 어디까지 믿을 수 있나요</h2>
-    <p>모든 계산은 계산 시점의 공개된 세율·요율(국민연금, 건강보험, 고용보험, 소득세 간이세액표 근사식 등)을 기준으로 하며, 실제 급여명세서나 금융기관 안내와 소수점 단위까지 완전히 일치하지 않을 수 있습니다. 회사의 급여 규정, 연말정산 결과, 금융기관의 상품 약관에 따라 실제 금액은 달라질 수 있으므로, 본 사이트의 결과는 <strong>의사결정 전 참고용</strong>으로 활용해 주세요. 정확한 금액은 국세청 홈택스, 4대사회보험 정보연계센터, 해당 금융기관을 통해 확인하시기 바랍니다.</p>
+    <p>연봉·재무 계산기는 계산 시점의 공개된 세율·요율(국민연금, 건강보험, 고용보험, 소득세 간이세액표 근사식 등)을 기준으로 하며, 실제 급여명세서나 금융기관 안내와 소수점 단위까지 완전히 일치하지 않을 수 있습니다. 회사의 급여 규정, 연말정산 결과, 금융기관의 상품 약관에 따라 실제 금액은 달라질 수 있으므로, 본 사이트의 결과는 <strong>의사결정 전 참고용</strong>으로 활용해 주세요. 정확한 금액은 국세청 홈택스, 4대사회보험 정보연계센터, 해당 금융기관을 통해 확인하시기 바랍니다. BMI·기초대사량 등 건강 계산기 역시 의학적 진단이 아닌 참고용 수치입니다.</p>
 
     <h2>개인정보는 어떻게 다루나요</h2>
     <p>계산기에 입력하는 금액과 날짜는 <strong>이용자의 브라우저 안에서만 계산</strong>되며 서버로 전송되거나 저장되지 않습니다. 자세한 내용은 <a href="privacy-policy.html">개인정보처리방침</a>을 확인해 주세요.</p>
@@ -122,8 +150,8 @@ footer strong{color:#d7ddd8}
 
 <footer>
   <div class="wrap">
-    <strong>단숨</strong> · 본 사이트의 계산 결과는 참고용 간이 계산이며, 실제 금액은 회사 급여 규정·세법 개정·금융기관 정책에 따라 달라질 수 있습니다.<br>
-    <a href="index.html">계산기</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
+    <strong>단숨</strong> · 본 사이트의 계산 결과는 참고용 간이 계산이며, 실제 값은 상황에 따라 달라질 수 있습니다.<br>
+    <a href="index.html">전체 도구</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
   </div>
 </footer>
 

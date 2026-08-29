@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>연봉·재무 계산기 — 단숨</title>
+<meta name="description" content="2025년 기준 연봉 실수령액 계산기, 퇴직금 계산기, 대출 상환 계산기, 예금·적금 이자 계산기를 무료로 제공합니다. 4대보험과 소득세를 반영한 월 실수령액을 바로 확인하세요.">
+<meta name="keywords" content="연봉 실수령액 계산기, 퇴직금 계산기, 대출 이자 계산기, 적금 계산기, 실수령액, 4대보험 계산">
+<meta property="og:title" content="연봉·재무 계산기 — 단숨">
+<meta property="og:description" content="4대보험과 소득세를 반영한 연봉 실수령액, 퇴직금, 대출 상환금, 예적금 이자를 무료로 계산하세요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4d3a'/%3E%3Cpath d='M38 6 16 36h12l-4 22 24-30H36z' fill='%23b98a2e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2420;
+  --ink-soft:#4c5a53;
+  --paper:#f5f6f2;
+  --card:#ffffff;
+  --bill:#0f4d3a;
+  --bill-2:#17694f;
+  --bill-tint:#e7efe9;
+  --gold:#b98a2e;
+  --line:#dce0d9;
+  --danger:#a4432e;
+  --radius:10px;
+  --sans:'Noto Sans KR',-apple-system,sans-serif;
+  --serif:'Noto Serif KR',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
+a{color:var(--bill-2)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+/* ── 헤더 ─────────────────────────── */
+header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
+.logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
+.logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
+.page-nav{display:flex;align-items:center;gap:18px}
+.page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
+.page-nav a:hover{color:#fff}
+.page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
+.nav-drop{position:relative}
+.nav-drop summary{cursor:pointer;list-style:none;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-drop summary::-webkit-details-marker{display:none}
+.nav-drop summary::after{content:" ▾";font-size:.7em}
+.nav-drop summary:hover{color:#fff}
+.nav-drop[open] summary{color:#fff}
+.drop-menu{position:absolute;top:100%;right:0;margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:150px;z-index:60}
+.drop-menu a{display:block;padding:9px 12px;border-radius:6px;color:var(--ink)!important;text-decoration:none;font-size:.88rem;font-weight:500}
+.drop-menu a:hover{background:var(--bill-tint);color:var(--bill)!important}
+.drop-menu a[aria-current="page"]{color:var(--bill)!important;font-weight:700;background:var(--bill-tint)}
+@media(max-width:560px){
+  .head-inner{padding:12px 14px}
+  .page-nav{gap:10px}
+  .page-nav a,.nav-drop summary{font-size:.78rem}
+}
+nav.tabs{background:var(--bill);border-top:1px solid rgba(255,255,255,.15)}
+.tabs-inner{display:flex;max-width:880px;margin:0 auto;overflow-x:auto}
+.tab-btn{flex:1;min-width:96px;background:none;border:none;color:rgba(255,255,255,.7);font-family:var(--sans);font-size:.92rem;font-weight:500;padding:12px 8px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:#fff}
+.tab-btn[aria-selected="true"]{color:#fff;border-bottom-color:var(--gold);font-weight:700}
+.tab-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+/* ── 계산기 공통 ───────────────────── */
+main{padding:34px 0 60px}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.panel-desc{color:var(--ink-soft);font-size:.94rem;margin-bottom:22px}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:720px){.calc-grid{grid-template-columns:1fr}}
+
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.86rem;font-weight:700;margin-bottom:6px}
+.field .hint{font-weight:400;color:var(--ink-soft);font-size:.78rem;margin-left:4px}
+.field input[type=number],.field input[type=date],.field select{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:1rem;background:#fff;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.field input:focus,.field select:focus{outline:2px solid var(--bill-2);outline-offset:-1px;border-color:var(--bill-2)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;padding:10px;border:none;background:#fff;font-family:var(--sans);font-size:.9rem;cursor:pointer;color:var(--ink-soft)}
+.seg button[aria-pressed="true"]{background:var(--bill-tint);color:var(--bill);font-weight:700}
+.seg button:focus-visible{outline:2px solid var(--bill-2);outline-offset:-2px}
+.calc-btn{width:100%;padding:13px;background:var(--bill);color:#fff;border:none;border-radius:8px;
+  font-family:var(--sans);font-size:1.02rem;font-weight:700;cursor:pointer;margin-top:4px;transition:background .15s}
+.calc-btn:hover{background:var(--bill-2)}
+.calc-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ── 명세서형 결과 카드 (시그니처) ────── */
+.slip{background:var(--card);border:1px solid var(--bill);border-radius:var(--radius);overflow:hidden;position:relative}
+.slip::before{content:"";position:absolute;inset:5px;border:1px solid var(--bill-tint);border-radius:6px;pointer-events:none}
+.slip-head{background:var(--bill);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:baseline}
+.slip-head .t{font-size:.82rem;letter-spacing:.14em;font-weight:500}
+.slip-head .no{font-size:.72rem;opacity:.6;font-variant-numeric:tabular-nums}
+.slip-body{padding:20px}
+.slip-main{text-align:center;padding:10px 0 18px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+.slip-main .cap{font-size:.82rem;color:var(--ink-soft);letter-spacing:.1em;margin-bottom:2px}
+.slip-main .amount{font-family:var(--serif);font-size:2.2rem;font-weight:700;color:var(--bill);font-variant-numeric:tabular-nums;line-height:1.25;word-break:keep-all}
+.slip-main .amount .won{font-size:1.1rem;margin-left:2px;color:var(--ink-soft)}
+.slip-main .sub{font-size:.85rem;color:var(--ink-soft);margin-top:4px}
+.slip-rows{width:100%;border-collapse:collapse;font-size:.9rem}
+.slip-rows td{padding:7px 2px;border-bottom:1px solid #f0f2ee;font-variant-numeric:tabular-nums}
+.slip-rows td:last-child{text-align:right;font-weight:500}
+.slip-rows tr.total td{border-bottom:none;border-top:2px solid var(--line);font-weight:700;padding-top:10px}
+.slip-rows tr.minus td:last-child{color:var(--danger)}
+.slip-note{font-size:.76rem;color:var(--ink-soft);padding:10px 20px 16px;line-height:1.5}
+
+/* ── 광고 자리 ─────────────────────── */
+.ad-slot{margin:30px 0;min-height:90px;display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--line);border-radius:var(--radius);color:#b9beb5;font-size:.8rem;letter-spacing:.1em}
+
+/* ── 설명 콘텐츠 ───────────────────── */
+.content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-top:30px}
+.content h2{font-family:var(--serif);font-size:1.25rem;margin-bottom:12px;color:var(--bill)}
+.content h3{font-size:1.02rem;margin:22px 0 8px}
+.content p{font-size:.93rem;color:var(--ink);margin-bottom:10px}
+.content ul,.content ol{padding-left:22px;font-size:.93rem;margin-bottom:10px}
+.content li{margin-bottom:4px}
+.content table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0;font-variant-numeric:tabular-nums}
+.content th,.content td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+.content th{background:var(--bill-tint);font-weight:700}
+details.faq{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff}
+details.faq summary{padding:12px 14px;cursor:pointer;font-weight:700;font-size:.92rem;list-style:none}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::before{content:"Q. ";color:var(--gold)}
+details.faq[open] summary{border-bottom:1px solid var(--line)}
+details.faq .a{padding:12px 14px;font-size:.9rem;color:var(--ink-soft)}
+
+footer{background:var(--ink);color:#aab3ad;font-size:.8rem;padding:26px 20px;text-align:center;line-height:1.7}
+footer strong{color:#d7ddd8}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <a class="logo" href="index.html">단숨<small>DANSUM</small></a>
+    <nav class="page-nav" aria-label="사이트 메뉴">
+      <details class="nav-drop">
+        <summary>계산기</summary>
+        <div class="drop-menu">
+          <a href="index.html">전체 도구</a>
+          <a href="finance.html" aria-current="page">연봉·재무</a>
+          <a href="date.html">날짜·시간</a>
+          <a href="text.html">텍스트·문서</a>
+          <a href="unit.html">단위 변환</a>
+          <a href="life.html">생활·건강</a>
+        </div>
+      </details>
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+  <nav class="tabs" aria-label="계산기 선택">
+    <div class="tabs-inner" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="salary">연봉 실수령액</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="severance">퇴직금</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="loan">대출 상환</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="savings">예금·적금</button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<!-- ═══════════ 1. 연봉 실수령액 ═══════════ -->
+<section class="panel active" id="panel-salary">
+  <h1 class="panel-title">연봉 실수령액 계산기</h1>
+  <p class="panel-desc">2025년 4대보험 요율과 근로소득세를 반영해 세후 월 실수령액을 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label>급여 기준</label>
+        <div class="seg" id="sal-mode">
+          <button type="button" aria-pressed="true" data-v="year">연봉</button>
+          <button type="button" aria-pressed="false" data-v="month">월급</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="sal-amount">금액 <span class="hint">원 단위</span></label>
+        <input type="number" id="sal-amount" value="40000000" min="0" step="100000">
+      </div>
+      <div class="field">
+        <label for="sal-taxfree">월 비과세액 <span class="hint">식대 등 · 기본 20만원</span></label>
+        <input type="number" id="sal-taxfree" value="200000" min="0" step="10000">
+      </div>
+      <div class="field">
+        <label for="sal-family">부양가족 수 <span class="hint">본인 포함</span></label>
+        <input type="number" id="sal-family" value="1" min="1" max="20">
+      </div>
+      <div class="field">
+        <label for="sal-child">8~20세 자녀 수</label>
+        <input type="number" id="sal-child" value="0" min="0" max="20">
+      </div>
+      <button class="calc-btn" id="sal-run">실수령액 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">급여 명세 · 예상</span><span class="no" id="sal-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">월 예상 실수령액</div>
+          <div class="amount"><span id="sal-net">—</span><span class="won">원</span></div>
+          <div class="sub" id="sal-year-net"></div>
+        </div>
+        <table class="slip-rows" id="sal-rows">
+          <tr><td>월 급여 (세전)</td><td id="r-gross">—</td></tr>
+          <tr class="minus"><td>국민연금 (4.5%)</td><td id="r-np">—</td></tr>
+          <tr class="minus"><td>건강보험 (3.545%)</td><td id="r-hi">—</td></tr>
+          <tr class="minus"><td>장기요양보험</td><td id="r-lt">—</td></tr>
+          <tr class="minus"><td>고용보험 (0.9%)</td><td id="r-ei">—</td></tr>
+          <tr class="minus"><td>소득세 (간이)</td><td id="r-it">—</td></tr>
+          <tr class="minus"><td>지방소득세</td><td id="r-lit">—</td></tr>
+          <tr class="total"><td>공제 합계</td><td id="r-ded">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 간이세액표가 아닌 근사 계산식을 사용한 참고용 금액입니다. 회사의 공제 항목·연말정산 결과에 따라 실제 수령액과 차이가 있을 수 있습니다.</div>
+    </div>
+  </div>
+
+  <!-- 광고 자리: 이 div 안에 애드센스 코드를 붙여넣으세요 -->
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>연봉 실수령액, 왜 생각보다 적을까?</h2>
+    <p>세전 연봉을 12로 나눈 금액과 실제 통장에 들어오는 금액은 다릅니다. 매달 급여에서 4대보험료와 근로소득세, 지방소득세가 원천징수되기 때문입니다. 2025년 기준 근로자 부담 요율은 다음과 같습니다.</p>
+    <table>
+      <tr><th>공제 항목</th><th>근로자 부담 요율</th><th>비고</th></tr>
+      <tr><td>국민연금</td><td>월 소득의 4.5%</td><td>기준소득월액 상·하한 적용</td></tr>
+      <tr><td>건강보험</td><td>월 소득의 3.545%</td><td>회사와 절반씩 부담</td></tr>
+      <tr><td>장기요양보험</td><td>건강보험료의 12.95%</td><td>건강보험료에 비례</td></tr>
+      <tr><td>고용보험</td><td>월 소득의 0.9%</td><td>실업급여 재원</td></tr>
+      <tr><td>근로소득세</td><td>간이세액표 기준</td><td>부양가족 수에 따라 변동</td></tr>
+      <tr><td>지방소득세</td><td>소득세의 10%</td><td>-</td></tr>
+    </table>
+    <h3>실수령액을 늘리는 방법</h3>
+    <ul>
+      <li><strong>비과세 항목 확인:</strong> 식대(월 20만원 한도), 자가운전보조금, 육아수당 등 비과세 항목이 급여에 반영되어 있는지 확인하세요.</li>
+      <li><strong>연말정산 공제 챙기기:</strong> 원천징수는 어디까지나 '미리 떼는 것'입니다. 신용카드·의료비·주택청약 등 공제를 챙기면 2~3월에 환급받을 수 있습니다.</li>
+      <li><strong>부양가족 등록:</strong> 소득이 없는 부모님·배우자를 부양가족으로 등록하면 매달 원천징수되는 소득세가 줄어듭니다.</li>
+    </ul>
+    <h3>자주 묻는 질문</h3>
+    <details class="faq"><summary>연봉에 퇴직금이 포함되어 있으면 어떻게 계산하나요?</summary><div class="a">'퇴직금 포함 연봉'이라면 연봉을 13으로 나눈 값이 월 세전 급여입니다. 예를 들어 퇴직금 포함 3,900만원이라면 월급 기준 300만원으로 입력해 계산하면 됩니다.</div></details>
+    <details class="faq"><summary>계산 결과와 실제 월급이 다른 이유는?</summary><div class="a">회사마다 상여금 지급 방식, 비과세 항목 구성, 간이세액표 적용 방식(80%·100%·120% 선택)이 달라 차이가 생깁니다. 본 계산기는 100% 기준 근사치를 제공합니다.</div></details>
+    <details class="faq"><summary>4대보험 요율은 매년 바뀌나요?</summary><div class="a">국민연금 요율은 장기간 9%(근로자 4.5%)로 유지되고 있지만, 건강보험·장기요양보험 요율은 매년 말 다음 해 요율이 결정됩니다. 최신 요율은 국민건강보험공단 공지를 확인하세요.</div></details>
+  </article>
+</section>
+
+<!-- ═══════════ 2. 퇴직금 ═══════════ -->
+<section class="panel" id="panel-severance">
+  <h1 class="panel-title">퇴직금 계산기</h1>
+  <p class="panel-desc">입사일·퇴사일과 최근 3개월 급여로 법정 퇴직금을 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="sev-in">입사일</label>
+        <input type="date" id="sev-in" value="2021-01-04">
+      </div>
+      <div class="field">
+        <label for="sev-out">퇴사일 <span class="hint">마지막 근무 다음 날</span></label>
+        <input type="date" id="sev-out" value="2026-01-05">
+      </div>
+      <div class="field">
+        <label for="sev-pay3">최근 3개월 급여 총액 <span class="hint">세전, 원</span></label>
+        <input type="number" id="sev-pay3" value="10500000" min="0" step="100000">
+      </div>
+      <div class="field">
+        <label for="sev-bonus">연간 상여금 총액 <span class="hint">없으면 0</span></label>
+        <input type="number" id="sev-bonus" value="0" min="0" step="100000">
+      </div>
+      <div class="field">
+        <label for="sev-leave">연차수당 <span class="hint">퇴직 전년도 미사용 연차수당, 없으면 0</span></label>
+        <input type="number" id="sev-leave" value="0" min="0" step="10000">
+      </div>
+      <button class="calc-btn" id="sev-run">퇴직금 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">퇴직금 정산 · 예상</span><span class="no" id="sev-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">예상 퇴직금 (세전)</div>
+          <div class="amount"><span id="sev-total">—</span><span class="won">원</span></div>
+          <div class="sub" id="sev-days"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>재직일수</td><td id="sv-d">—</td></tr>
+          <tr><td>1일 평균임금</td><td id="sv-avg">—</td></tr>
+          <tr><td>1일 통상임금 비교</td><td id="sv-note">평균임금 적용</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 퇴직소득세 공제 전 금액입니다. 상여금·연차수당은 연간 금액의 3/12이 평균임금 계산에 산입됩니다.</div>
+    </div>
+  </div>
+
+  <!-- 광고 자리 -->
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>퇴직금 지급 기준과 계산 방법</h2>
+    <p>퇴직금은 <strong>1주 15시간 이상 근무한 근로자가 1년 이상 계속 근로한 경우</strong> 지급되는 법정 급여입니다. 정규직뿐 아니라 계약직·아르바이트도 조건을 충족하면 받을 수 있습니다.</p>
+    <h3>법정 계산식</h3>
+    <p>퇴직금 = 1일 평균임금 × 30일 × (재직일수 ÷ 365)</p>
+    <ul>
+      <li><strong>1일 평균임금</strong> = 퇴직 전 3개월 임금 총액 ÷ 그 3개월의 총 일수</li>
+      <li>연간 상여금과 연차수당은 <strong>3/12</strong>만큼 3개월 임금에 더해 계산합니다.</li>
+      <li>평균임금이 통상임금보다 적으면 통상임금으로 계산합니다.</li>
+    </ul>
+    <h3>꼭 알아둘 것</h3>
+    <ul>
+      <li>퇴직금은 퇴사일로부터 <strong>14일 이내</strong> 지급이 원칙입니다. 미지급 시 고용노동부에 진정을 넣을 수 있습니다.</li>
+      <li>퇴직연금(DC형) 가입 회사는 계산 방식이 다릅니다. DC형은 매년 연봉의 1/12 이상을 적립하는 구조입니다.</li>
+      <li>수령 시 퇴직소득세가 부과되지만, 근속연수공제가 커서 일반 소득세보다 세부담이 낮습니다.</li>
+    </ul>
+    <h3>자주 묻는 질문</h3>
+    <details class="faq"><summary>1년 미만 근무해도 퇴직금을 받을 수 있나요?</summary><div class="a">계속근로기간이 1년 미만이면 법정 퇴직금 지급 대상이 아닙니다. 다만 회사 규정으로 지급하는 경우는 가능합니다.</div></details>
+    <details class="faq"><summary>수습기간도 재직일수에 포함되나요?</summary><div class="a">네. 수습·인턴 기간도 같은 회사에서 계속 근로했다면 재직일수에 포함됩니다.</div></details>
+    <details class="faq"><summary>퇴사 직전 급여가 줄었는데 불리하지 않나요?</summary><div class="a">평균임금이 통상임금보다 낮아지면 통상임금을 기준으로 계산하도록 법에 정해져 있어, 일시적 급여 감소로 크게 불리해지지는 않습니다.</div></details>
+  </article>
+</section>
+
+<!-- ═══════════ 3. 대출 상환 ═══════════ -->
+<section class="panel" id="panel-loan">
+  <h1 class="panel-title">대출 상환 계산기</h1>
+  <p class="panel-desc">원리금균등·원금균등·만기일시 상환 방식별 월 상환금과 총 이자를 비교합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="loan-amt">대출 금액 <span class="hint">원</span></label>
+        <input type="number" id="loan-amt" value="300000000" min="0" step="1000000">
+      </div>
+      <div class="field">
+        <label for="loan-rate">연 이자율 <span class="hint">%</span></label>
+        <input type="number" id="loan-rate" value="4.0" min="0" max="30" step="0.01">
+      </div>
+      <div class="field">
+        <label for="loan-years">대출 기간 <span class="hint">년</span></label>
+        <input type="number" id="loan-years" value="30" min="1" max="50">
+      </div>
+      <div class="field">
+        <label>상환 방식</label>
+        <div class="seg" id="loan-mode">
+          <button type="button" aria-pressed="true" data-v="amort">원리금균등</button>
+          <button type="button" aria-pressed="false" data-v="principal">원금균등</button>
+          <button type="button" aria-pressed="false" data-v="bullet">만기일시</button>
+        </div>
+      </div>
+      <button class="calc-btn" id="loan-run">상환금 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">대출 상환 계획 · 예상</span><span class="no" id="loan-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap" id="loan-cap">월 상환금</div>
+          <div class="amount"><span id="loan-monthly">—</span><span class="won">원</span></div>
+          <div class="sub" id="loan-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>총 상환 원금</td><td id="ln-p">—</td></tr>
+          <tr class="minus"><td>총 이자</td><td id="ln-i">—</td></tr>
+          <tr class="total"><td>총 상환액</td><td id="ln-t">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 중도상환수수료·거치기간·금리 변동은 반영되지 않은 단순 계산입니다.</div>
+    </div>
+  </div>
+
+  <!-- 광고 자리 -->
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>상환 방식, 어떤 걸 선택해야 할까?</h2>
+    <table>
+      <tr><th>방식</th><th>월 상환금</th><th>총 이자</th><th>적합한 경우</th></tr>
+      <tr><td>원리금균등</td><td>매달 동일</td><td>중간</td><td>매달 고정 지출을 원하는 직장인</td></tr>
+      <tr><td>원금균등</td><td>점점 감소</td><td>가장 적음</td><td>초기 상환 여력이 있는 경우</td></tr>
+      <tr><td>만기일시</td><td>이자만 납부</td><td>가장 많음</td><td>단기 자금·전세대출 등</td></tr>
+    </table>
+    <p>같은 금액·같은 금리라도 <strong>원금균등 방식이 총 이자가 가장 적습니다.</strong> 다만 초기 상환금이 크기 때문에, 매달 지출을 일정하게 유지하고 싶다면 원리금균등이 관리하기 편합니다.</p>
+    <h3>이자를 줄이는 실전 팁</h3>
+    <ul>
+      <li><strong>중도상환수수료 면제 시점 확인:</strong> 대부분 대출은 3년 경과 후 수수료가 면제됩니다. 여유 자금이 생기면 일부 상환으로 원금을 줄이세요.</li>
+      <li><strong>금리인하요구권:</strong> 승진·연봉 인상·신용점수 상승 시 은행에 금리 인하를 요구할 수 있는 법적 권리가 있습니다.</li>
+      <li><strong>대환대출 비교:</strong> 온라인 대환대출 인프라를 통해 더 낮은 금리로 갈아탈 수 있는지 주기적으로 확인하세요.</li>
+    </ul>
+    <h3>자주 묻는 질문</h3>
+    <details class="faq"><summary>거치기간이 있으면 어떻게 되나요?</summary><div class="a">거치기간에는 이자만 납부하고, 거치가 끝난 뒤 남은 기간 동안 원금을 나눠 갚습니다. 거치기간이 길수록 총 이자는 늘어납니다.</div></details>
+    <details class="faq"><summary>변동금리 대출도 계산할 수 있나요?</summary><div class="a">본 계산기는 현재 금리가 만기까지 유지된다고 가정합니다. 변동금리는 기준금리에 따라 상환금이 달라지므로 참고용으로만 활용하세요.</div></details>
+  </article>
+</section>
+
+<!-- ═══════════ 4. 예금·적금 ═══════════ -->
+<section class="panel" id="panel-savings">
+  <h1 class="panel-title">예금·적금 계산기</h1>
+  <p class="panel-desc">이자소득세 15.4%를 반영한 세후 실수령 이자를 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label>상품 종류</label>
+        <div class="seg" id="sav-mode">
+          <button type="button" aria-pressed="true" data-v="deposit">예금 (목돈 예치)</button>
+          <button type="button" aria-pressed="false" data-v="install">적금 (매달 납입)</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="sav-amt" id="sav-amt-label">예치 금액 <span class="hint">원</span></label>
+        <input type="number" id="sav-amt" value="10000000" min="0" step="100000">
+      </div>
+      <div class="field">
+        <label for="sav-rate">연 이자율 <span class="hint">%</span></label>
+        <input type="number" id="sav-rate" value="3.5" min="0" max="30" step="0.01">
+      </div>
+      <div class="field">
+        <label for="sav-months">기간 <span class="hint">개월</span></label>
+        <input type="number" id="sav-months" value="12" min="1" max="600">
+      </div>
+      <div class="field">
+        <label for="sav-tax">과세 방식</label>
+        <select id="sav-tax">
+          <option value="0.154">일반과세 (15.4%)</option>
+          <option value="0.095">세금우대 (9.5%)</option>
+          <option value="0">비과세</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="sav-run">이자 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">만기 수령 · 예상</span><span class="no" id="sav-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">세후 만기 수령액</div>
+          <div class="amount"><span id="sav-total">—</span><span class="won">원</span></div>
+          <div class="sub" id="sav-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>원금 합계</td><td id="sv-p">—</td></tr>
+          <tr><td>세전 이자</td><td id="sv-i">—</td></tr>
+          <tr class="minus"><td>이자소득세</td><td id="sv-t">—</td></tr>
+          <tr class="total"><td>세후 이자</td><td id="sv-ni">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 예금은 단리, 적금은 단리(월 단위) 기준입니다. 실제 상품 약관에 따라 차이가 있을 수 있습니다.</div>
+    </div>
+  </div>
+
+  <!-- 광고 자리 -->
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>예금과 적금, 같은 금리라도 이자가 다르다</h2>
+    <p>연 3.5% 적금에 매달 100만원씩 1년을 넣어도 이자는 '1,200만원의 3.5%'가 아닙니다. 첫 달 납입금만 12개월치 이자를 받고, 마지막 달 납입금은 1개월치 이자만 받기 때문에 <strong>실제 이자는 표시 금리의 절반 수준</strong>이 됩니다. 목돈이 있다면 같은 금리의 예금이 이자가 더 많습니다.</p>
+    <h3>이자소득세 줄이는 방법</h3>
+    <ul>
+      <li><strong>ISA 계좌:</strong> 계좌 내 이자·배당소득 일정 한도까지 비과세, 초과분은 9.9% 분리과세됩니다.</li>
+      <li><strong>상호금융 세금우대:</strong> 신협·새마을금고·농협 조합원 예탁금은 한도 내에서 이자소득세가 감면됩니다(농특세 등 일부 부과).</li>
+      <li><strong>청년 우대 상품:</strong> 청년도약계좌 등 정부 지원 상품은 비과세 혜택과 매칭 지원금이 함께 제공됩니다.</li>
+    </ul>
+    <h3>자주 묻는 질문</h3>
+    <details class="faq"><summary>단리와 복리의 차이는 무엇인가요?</summary><div class="a">단리는 원금에만 이자가 붙고, 복리는 이자에도 이자가 붙습니다. 국내 예·적금은 대부분 단리이며, 복리 효과를 원하면 만기 후 재예치하거나 복리식 상품을 찾아야 합니다.</div></details>
+    <details class="faq"><summary>중도해지하면 이자를 못 받나요?</summary><div class="a">중도해지 시 약정 금리 대신 훨씬 낮은 중도해지 이율이 적용됩니다. 급전이 필요하면 해지 대신 예금담보대출을 비교해보는 것도 방법입니다.</div></details>
+  </article>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>단숨</strong> · 본 사이트의 계산 결과는 참고용 간이 계산이며, 실제 금액은 회사 급여 규정·세법 개정·금융기관 정책에 따라 달라질 수 있습니다.<br>
+    정확한 금액은 국세청 홈택스, 4대사회보험 정보연계센터, 해당 금융기관에서 확인하시기 바랍니다.<br>
+    <a href="index.html">전체 도구</a> · <a href="about.html">소개</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════
+   기준 요율 (매년 이 부분만 갱신하면 됩니다)
+   ══════════════════════════════════════════════════ */
+const RATES = {
+  nationalPension: 0.045,      // 국민연금 근로자 부담
+  npCapMonthly: 6370000,       // 국민연금 기준소득월액 상한 (매년 7월 변경, 확인 필요)
+  npFloorMonthly: 400000,      // 국민연금 기준소득월액 하한
+  healthIns: 0.03545,          // 건강보험 근로자 부담 (2025년 기준)
+  longTermCare: 0.1295,        // 장기요양보험 (건강보험료 대비)
+  employmentIns: 0.009,        // 고용보험 근로자 부담
+  interestTaxYear: '2025'
+};
+
+const fmt = n => Math.round(n).toLocaleString('ko-KR');
+const val = id => Number(document.getElementById(id).value) || 0;
+const set = (id, v) => document.getElementById(id).textContent = v;
+const today = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+['sal-date','sev-date','loan-date','sav-date'].forEach(id => set(id, 'NO. ' + today));
+
+/* ── 탭 전환 ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0});
+  });
+});
+
+/* ── 세그먼트 버튼 공통 ── */
+function segValue(segId) {
+  return document.querySelector('#' + segId + ' button[aria-pressed="true"]').dataset.v;
+}
+function bindSeg(segId, onChange) {
+  document.querySelectorAll('#' + segId + ' button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#' + segId + ' button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      if (onChange) onChange(b.dataset.v);
+    });
+  });
+}
+
+/* ══════════ 1. 연봉 실수령액 ══════════ */
+bindSeg('sal-mode');
+
+function incomeTaxYearly(taxBase) {
+  // 종합소득세 기본세율 (2023년 개정 이후)
+  const brackets = [
+    [14000000, 0.06, 0],
+    [50000000, 0.15, 1260000],
+    [88000000, 0.24, 5760000],
+    [150000000, 0.35, 15440000],
+    [300000000, 0.38, 19940000],
+    [500000000, 0.40, 25940000],
+    [1000000000, 0.42, 35940000],
+    [Infinity, 0.45, 65940000]
+  ];
+  for (const [limit, rate, deduct] of brackets) {
+    if (taxBase <= limit) return Math.max(0, taxBase * rate - deduct);
+  }
+  return 0;
+}
+
+function earnedIncomeDeduction(gross) {
+  // 근로소득공제
+  let d;
+  if (gross <= 5000000) d = gross * 0.7;
+  else if (gross <= 15000000) d = 3500000 + (gross - 5000000) * 0.4;
+  else if (gross <= 45000000) d = 7500000 + (gross - 15000000) * 0.15;
+  else if (gross <= 100000000) d = 12000000 + (gross - 45000000) * 0.05;
+  else d = 14750000 + (gross - 100000000) * 0.02;
+  return Math.min(d, 20000000);
+}
+
+function calcSalary() {
+  const mode = segValue('sal-mode');
+  const amount = val('sal-amount');
+  const taxFreeM = val('sal-taxfree');
+  const family = val('sal-family');
+  const children = val('sal-child');
+  const salRowIds = ['r-gross','r-np','r-hi','r-lt','r-ei','r-it','r-lit','r-ded'];
+
+  if (amount <= 0) {
+    set('sal-net', '금액을 입력해주세요');
+    set('sal-year-net', '');
+    salRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+  if (taxFreeM < 0 || family < 1 || children < 0) {
+    set('sal-net', '입력값을 확인해주세요');
+    set('sal-year-net', '비과세액은 0원 이상, 부양가족 수는 1명 이상이어야 합니다.');
+    salRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+
+  const grossYear = mode === 'year' ? amount : amount * 12;
+  const grossMonth = grossYear / 12;
+  const taxableMonth = Math.max(0, grossMonth - taxFreeM);
+  const taxableYear = taxableMonth * 12;
+
+  // 4대보험 (월)
+  const npBase = Math.min(Math.max(taxableMonth, RATES.npFloorMonthly), RATES.npCapMonthly);
+  const np = npBase * RATES.nationalPension;
+  const hi = taxableMonth * RATES.healthIns;
+  const lt = hi * RATES.longTermCare;
+  const ei = taxableMonth * RATES.employmentIns;
+
+  // 소득세 근사 (연 단위 → 월 분할)
+  const eid = earnedIncomeDeduction(taxableYear);
+  const personalDeduct = 1500000 * family;
+  const pensionDeduct = np * 12;
+  const taxBase = Math.max(0, taxableYear - eid - personalDeduct - pensionDeduct);
+  let tax = incomeTaxYearly(taxBase);
+
+  // 근로소득세액공제 (간이)
+  let credit = tax <= 1300000 ? tax * 0.55 : 715000 + (tax - 1300000) * 0.30;
+  let creditCap = 740000;
+  if (taxableYear > 33000000 && taxableYear <= 70000000) creditCap = 660000;
+  else if (taxableYear > 70000000 && taxableYear <= 120000000) creditCap = 500000;
+  else if (taxableYear > 120000000) creditCap = 200000;
+  credit = Math.min(credit, creditCap);
+
+  // 자녀세액공제 (8~20세: 첫째 25만, 둘째 30만, 셋째부터 40만)
+  let childCredit = 0;
+  if (children >= 1) childCredit += 250000;
+  if (children >= 2) childCredit += 300000;
+  if (children >= 3) childCredit += (children - 2) * 400000;
+
+  tax = Math.max(0, tax - credit - childCredit);
+  const itMonth = tax / 12;
+  const litMonth = itMonth * 0.1;
+
+  const ded = np + hi + lt + ei + itMonth + litMonth;
+  const net = grossMonth - ded;
+
+  set('sal-net', fmt(net));
+  set('sal-year-net', '연 환산 약 ' + fmt(net * 12) + '원');
+  set('r-gross', fmt(grossMonth) + '원');
+  set('r-np', '-' + fmt(np) + '원');
+  set('r-hi', '-' + fmt(hi) + '원');
+  set('r-lt', '-' + fmt(lt) + '원');
+  set('r-ei', '-' + fmt(ei) + '원');
+  set('r-it', '-' + fmt(itMonth) + '원');
+  set('r-lit', '-' + fmt(litMonth) + '원');
+  set('r-ded', '-' + fmt(ded) + '원');
+}
+document.getElementById('sal-run').addEventListener('click', calcSalary);
+
+/* ══════════ 2. 퇴직금 ══════════ */
+function calcSeverance() {
+  const inD = new Date(document.getElementById('sev-in').value);
+  const outD = new Date(document.getElementById('sev-out').value);
+  const pay3 = val('sev-pay3');
+  const bonus = val('sev-bonus');
+  const leave = val('sev-leave');
+
+  if (isNaN(inD) || isNaN(outD)) {
+    set('sev-total', '날짜를 입력해주세요');
+    set('sev-days', '입사일과 퇴사일을 모두 입력해주세요.');
+    set('sv-d', '—'); set('sv-avg', '—');
+    return;
+  }
+  if (outD <= inD) {
+    set('sev-total', '날짜 확인');
+    set('sev-days', '퇴사일이 입사일보다 뒤여야 합니다.');
+    set('sv-d', '—'); set('sv-avg', '—');
+    return;
+  }
+  if (pay3 <= 0 || bonus < 0 || leave < 0) {
+    set('sev-total', '입력값을 확인해주세요');
+    set('sev-days', '급여·상여금·연차수당은 0 이상이어야 합니다.');
+    set('sv-d', '—'); set('sv-avg', '—');
+    return;
+  }
+  const days = Math.round((outD - inD) / 86400000);
+
+  // 퇴사 전 3개월의 총 일수
+  const threeMonthsAgo = new Date(outD);
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  const periodDays = Math.round((outD - threeMonthsAgo) / 86400000);
+
+  const bonusPortion = bonus * 3 / 12;
+  const leavePortion = leave * 3 / 12;
+  const avgDaily = (pay3 + bonusPortion + leavePortion) / periodDays;
+  const total = avgDaily * 30 * (days / 365);
+
+  set('sev-total', fmt(total));
+  set('sev-days', '재직 ' + Math.floor(days / 365) + '년 ' + Math.floor((days % 365) / 30) + '개월');
+  set('sv-d', days.toLocaleString() + '일');
+  set('sv-avg', fmt(avgDaily) + '원');
+}
+document.getElementById('sev-run').addEventListener('click', calcSeverance);
+
+/* ══════════ 3. 대출 상환 ══════════ */
+bindSeg('loan-mode');
+
+function calcLoan() {
+  const P = val('loan-amt');
+  const rateInput = val('loan-rate');
+  const years = val('loan-years');
+  const mode = segValue('loan-mode');
+  const loanRowIds = ['ln-p','ln-i','ln-t'];
+
+  if (P <= 0) {
+    set('loan-monthly', '금액을 입력해주세요');
+    set('loan-sub', '');
+    loanRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+  if (rateInput < 0 || years <= 0) {
+    set('loan-monthly', '입력값을 확인해주세요');
+    set('loan-sub', '이자율은 0 이상, 기간은 1년 이상이어야 합니다.');
+    loanRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+
+  const r = rateInput / 100 / 12;
+  const n = years * 12;
+
+  let firstMonthly, totalInterest, cap = '월 상환금', sub = '';
+
+  if (mode === 'amort') {
+    const m = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    firstMonthly = m;
+    totalInterest = m * n - P;
+    sub = '매달 동일하게 상환';
+  } else if (mode === 'principal') {
+    const principalM = P / n;
+    firstMonthly = principalM + P * r;
+    totalInterest = 0;
+    for (let i = 0; i < n; i++) totalInterest += (P - principalM * i) * r;
+    cap = '첫 달 상환금';
+    const last = principalM + principalM * r;
+    sub = '마지막 달 약 ' + fmt(last) + '원 (매달 감소)';
+  } else {
+    firstMonthly = P * r;
+    totalInterest = P * r * n;
+    cap = '월 이자';
+    sub = '만기에 원금 ' + fmt(P) + '원 일시 상환';
+  }
+
+  set('loan-cap', cap);
+  set('loan-monthly', fmt(firstMonthly));
+  set('loan-sub', sub);
+  set('ln-p', fmt(P) + '원');
+  set('ln-i', '-' + fmt(totalInterest) + '원 부담');
+  set('ln-t', fmt(P + totalInterest) + '원');
+}
+document.getElementById('loan-run').addEventListener('click', calcLoan);
+
+/* ══════════ 4. 예금·적금 ══════════ */
+bindSeg('sav-mode', v => {
+  document.getElementById('sav-amt-label').innerHTML =
+    v === 'deposit' ? '예치 금액 <span class="hint">원</span>' : '월 납입액 <span class="hint">원</span>';
+  document.getElementById('sav-amt').value = v === 'deposit' ? 10000000 : 500000;
+});
+
+function calcSavings() {
+  const mode = segValue('sav-mode');
+  const amt = val('sav-amt');
+  const rateInput = val('sav-rate');
+  const months = val('sav-months');
+  const taxRate = Number(document.getElementById('sav-tax').value);
+  const savRowIds = ['sv-p','sv-i','sv-t','sv-ni'];
+
+  if (amt <= 0) {
+    set('sav-total', mode === 'deposit' ? '예치 금액을 입력해주세요' : '월 납입액을 입력해주세요');
+    set('sav-sub', '');
+    savRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+  if (rateInput < 0 || months <= 0) {
+    set('sav-total', '입력값을 확인해주세요');
+    set('sav-sub', '이자율은 0 이상, 기간은 1개월 이상이어야 합니다.');
+    savRowIds.forEach(id => set(id, '—'));
+    return;
+  }
+
+  const rate = rateInput / 100;
+  let principal, interest;
+  if (mode === 'deposit') {
+    principal = amt;
+    interest = amt * rate * (months / 12);
+  } else {
+    principal = amt * months;
+    // 적금 단리: k번째 납입금은 (months - k + 1)개월 이자
+    interest = amt * rate / 12 * (months * (months + 1) / 2);
+  }
+  const tax = interest * taxRate;
+  const netInterest = interest - tax;
+
+  set('sav-total', fmt(principal + netInterest));
+  set('sav-sub', mode === 'deposit'
+    ? fmt(amt) + '원 × ' + months + '개월 예치'
+    : '월 ' + fmt(amt) + '원 × ' + months + '회 납입');
+  set('sv-p', fmt(principal) + '원');
+  set('sv-i', fmt(interest) + '원');
+  set('sv-t', '-' + fmt(tax) + '원');
+  set('sv-ni', fmt(netInterest) + '원');
+}
+document.getElementById('sav-run').addEventListener('click', calcSavings);
+
+/* 첫 화면 자동 계산 */
+calcSalary();
+calcSeverance();
+calcLoan();
+calcSavings();
+</script>
+</body>
+</html>

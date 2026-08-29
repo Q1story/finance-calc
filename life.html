@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>생활·건강 계산기 — BMI·기초대사량·알바 급여 | 단숨</title>
+<meta name="description" content="BMI 계산기, 기초대사량(BMR)·하루 권장 칼로리 계산기, 시급 기준 아르바이트 급여(주휴수당 포함) 계산기를 무료로 제공합니다.">
+<meta name="keywords" content="BMI 계산기, 기초대사량 계산기, 칼로리 계산기, 시급 계산기, 알바 급여 계산기, 주휴수당 계산기">
+<meta property="og:title" content="생활·건강 계산기 — 단숨">
+<meta property="og:description" content="BMI, 기초대사량·칼로리, 아르바이트 급여(주휴수당 포함)를 바로 계산하세요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4d3a'/%3E%3Cpath d='M38 6 16 36h12l-4 22 24-30H36z' fill='%23b98a2e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2420;
+  --ink-soft:#4c5a53;
+  --paper:#f5f6f2;
+  --card:#ffffff;
+  --bill:#0f4d3a;
+  --bill-2:#17694f;
+  --bill-tint:#e7efe9;
+  --gold:#b98a2e;
+  --line:#dce0d9;
+  --danger:#a4432e;
+  --radius:10px;
+  --sans:'Noto Sans KR',-apple-system,sans-serif;
+  --serif:'Noto Serif KR',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
+a{color:var(--bill-2)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
+.logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
+.logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
+.page-nav{display:flex;align-items:center;gap:18px}
+.page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
+.page-nav a:hover{color:#fff}
+.page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
+.nav-drop{position:relative}
+.nav-drop summary{cursor:pointer;list-style:none;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-drop summary::-webkit-details-marker{display:none}
+.nav-drop summary::after{content:" ▾";font-size:.7em}
+.nav-drop summary:hover{color:#fff}
+.nav-drop[open] summary{color:#fff}
+.drop-menu{position:absolute;top:100%;right:0;margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:150px;z-index:60}
+.drop-menu a{display:block;padding:9px 12px;border-radius:6px;color:var(--ink)!important;text-decoration:none;font-size:.88rem;font-weight:500}
+.drop-menu a:hover{background:var(--bill-tint);color:var(--bill)!important}
+.drop-menu a[aria-current="page"]{color:var(--bill)!important;font-weight:700;background:var(--bill-tint)}
+@media(max-width:560px){
+  .head-inner{padding:12px 14px}
+  .page-nav{gap:10px}
+  .page-nav a,.nav-drop summary{font-size:.78rem}
+}
+nav.tabs{background:var(--bill);border-top:1px solid rgba(255,255,255,.15)}
+.tabs-inner{display:flex;max-width:880px;margin:0 auto;overflow-x:auto}
+.tab-btn{flex:1;min-width:96px;background:none;border:none;color:rgba(255,255,255,.7);font-family:var(--sans);font-size:.92rem;font-weight:500;padding:12px 8px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:#fff}
+.tab-btn[aria-selected="true"]{color:#fff;border-bottom-color:var(--gold);font-weight:700}
+.tab-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+main{padding:34px 0 60px}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.panel-desc{color:var(--ink-soft);font-size:.94rem;margin-bottom:22px}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:720px){.calc-grid{grid-template-columns:1fr}}
+
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.86rem;font-weight:700;margin-bottom:6px}
+.field .hint{font-weight:400;color:var(--ink-soft);font-size:.78rem;margin-left:4px}
+.field input[type=number],.field select{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:1rem;background:#fff;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.field input:focus,.field select:focus{outline:2px solid var(--bill-2);outline-offset:-1px;border-color:var(--bill-2)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;padding:10px;border:none;background:#fff;font-family:var(--sans);font-size:.9rem;cursor:pointer;color:var(--ink-soft)}
+.seg button[aria-pressed="true"]{background:var(--bill-tint);color:var(--bill);font-weight:700}
+.seg button:focus-visible{outline:2px solid var(--bill-2);outline-offset:-2px}
+.calc-btn{width:100%;padding:13px;background:var(--bill);color:#fff;border:none;border-radius:8px;
+  font-family:var(--sans);font-size:1.02rem;font-weight:700;cursor:pointer;margin-top:4px;transition:background .15s}
+.calc-btn:hover{background:var(--bill-2)}
+.calc-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.slip{background:var(--card);border:1px solid var(--bill);border-radius:var(--radius);overflow:hidden;position:relative}
+.slip::before{content:"";position:absolute;inset:5px;border:1px solid var(--bill-tint);border-radius:6px;pointer-events:none}
+.slip-head{background:var(--bill);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:baseline}
+.slip-head .t{font-size:.82rem;letter-spacing:.14em;font-weight:500}
+.slip-head .no{font-size:.72rem;opacity:.6;font-variant-numeric:tabular-nums}
+.slip-body{padding:20px}
+.slip-main{text-align:center;padding:10px 0 18px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+.slip-main .cap{font-size:.82rem;color:var(--ink-soft);letter-spacing:.1em;margin-bottom:2px}
+.slip-main .amount{font-family:var(--serif);font-size:2.2rem;font-weight:700;color:var(--bill);font-variant-numeric:tabular-nums;line-height:1.25;word-break:keep-all}
+.slip-main .amount .won{font-size:1.1rem;margin-left:2px;color:var(--ink-soft)}
+.slip-main .sub{font-size:.85rem;color:var(--ink-soft);margin-top:4px}
+.slip-rows{width:100%;border-collapse:collapse;font-size:.9rem}
+.slip-rows td{padding:7px 2px;border-bottom:1px solid #f0f2ee;font-variant-numeric:tabular-nums}
+.slip-rows td:last-child{text-align:right;font-weight:500}
+.slip-rows tr.total td{border-bottom:none;border-top:2px solid var(--line);font-weight:700;padding-top:10px}
+.slip-note{font-size:.76rem;color:var(--ink-soft);padding:10px 20px 16px;line-height:1.5}
+
+.ad-slot{margin:30px 0;min-height:90px;display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--line);border-radius:var(--radius);color:#b9beb5;font-size:.8rem;letter-spacing:.1em}
+
+.content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-top:30px}
+.content h2{font-family:var(--serif);font-size:1.25rem;margin-bottom:12px;color:var(--bill)}
+.content table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+.content th,.content td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+.content th{background:var(--bill-tint);font-weight:700}
+.content p{font-size:.93rem;color:var(--ink);margin-bottom:10px}
+
+footer{background:var(--ink);color:#aab3ad;font-size:.8rem;padding:26px 20px;text-align:center;line-height:1.7}
+footer strong{color:#d7ddd8}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <a class="logo" href="index.html">단숨<small>DANSUM</small></a>
+    <nav class="page-nav" aria-label="사이트 메뉴">
+      <details class="nav-drop">
+        <summary>계산기</summary>
+        <div class="drop-menu">
+          <a href="index.html">전체 도구</a>
+          <a href="finance.html">연봉·재무</a>
+          <a href="date.html">날짜·시간</a>
+          <a href="text.html">텍스트·문서</a>
+          <a href="unit.html">단위 변환</a>
+          <a href="life.html" aria-current="page">생활·건강</a>
+        </div>
+      </details>
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+  <nav class="tabs" aria-label="계산기 선택">
+    <div class="tabs-inner" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="bmi">BMI</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="bmr">기초대사량</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="wage">알바 급여</button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<!-- ═══════════ 1. BMI ═══════════ -->
+<section class="panel active" id="panel-bmi">
+  <h1 class="panel-title">BMI 계산기</h1>
+  <p class="panel-desc">키와 몸무게로 체질량지수(BMI)와 비만도를 계산합니다.</p>
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="bmi-height">키 <span class="hint">cm</span></label>
+        <input type="number" id="bmi-height" value="170" min="50" max="250" step="0.1">
+      </div>
+      <div class="field">
+        <label for="bmi-weight">몸무게 <span class="hint">kg</span></label>
+        <input type="number" id="bmi-weight" value="65" min="20" max="300" step="0.1">
+      </div>
+      <button class="calc-btn" id="bmi-run">BMI 계산하기</button>
+    </div>
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">BMI · 결과</span><span class="no" id="bmi-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">BMI 지수</div>
+          <div class="amount" id="bmi-value">—</div>
+          <div class="sub" id="bmi-category"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>표준 체중 (BMI 22 기준)</td><td id="bmi-standard">—</td></tr>
+          <tr class="total"><td>표준 체중과 차이</td><td id="bmi-diff">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 대한비만학회 기준(저체중 18.5 미만 / 정상 18.5~22.9 / 비만전단계 23~24.9 / 1단계비만 25~29.9 / 2단계비만 30 이상)을 사용합니다.</div>
+    </div>
+  </div>
+  <div class="ad-slot">AD</div>
+</section>
+
+<!-- ═══════════ 2. 기초대사량 ═══════════ -->
+<section class="panel" id="panel-bmr">
+  <h1 class="panel-title">기초대사량·칼로리 계산기</h1>
+  <p class="panel-desc">Mifflin-St Jeor 공식으로 기초대사량(BMR)과 활동을 반영한 하루 권장 칼로리를 계산합니다.</p>
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label>성별</label>
+        <div class="seg" id="bmr-sex">
+          <button type="button" aria-pressed="true" data-v="m">남성</button>
+          <button type="button" aria-pressed="false" data-v="f">여성</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="bmr-age">나이 <span class="hint">세</span></label>
+        <input type="number" id="bmr-age" value="30" min="1" max="120">
+      </div>
+      <div class="field">
+        <label for="bmr-height">키 <span class="hint">cm</span></label>
+        <input type="number" id="bmr-height" value="170" min="50" max="250" step="0.1">
+      </div>
+      <div class="field">
+        <label for="bmr-weight">몸무게 <span class="hint">kg</span></label>
+        <input type="number" id="bmr-weight" value="65" min="20" max="300" step="0.1">
+      </div>
+      <div class="field">
+        <label for="bmr-activity">활동 수준</label>
+        <select id="bmr-activity">
+          <option value="1.2">거의 운동 안 함 (주로 앉아서 생활)</option>
+          <option value="1.375">가벼운 활동 (주 1~3일 운동)</option>
+          <option value="1.55" selected>보통 활동 (주 3~5일 운동)</option>
+          <option value="1.725">활발한 활동 (주 6~7일 운동)</option>
+          <option value="1.9">매우 활발 (강도 높은 운동·육체노동)</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="bmr-run">칼로리 계산하기</button>
+    </div>
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">칼로리 · 결과</span><span class="no" id="bmr-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">하루 유지 칼로리 (TDEE)</div>
+          <div class="amount"><span id="bmr-tdee">—</span><span class="won">kcal</span></div>
+          <div class="sub" id="bmr-basal-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>기초대사량 (BMR)</td><td id="bmr-bmr">—</td></tr>
+          <tr><td>체중 감량 목표 <span class="hint">일 -500kcal</span></td><td id="bmr-cut">—</td></tr>
+          <tr class="total"><td>체중 증량 목표 <span class="hint">일 +500kcal</span></td><td id="bmr-bulk">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 체중 1kg 변화에는 약 7,700kcal의 누적 차이가 필요한 것으로 알려져 있습니다.</div>
+    </div>
+  </div>
+  <div class="ad-slot">AD</div>
+</section>
+
+<!-- ═══════════ 3. 알바 급여 ═══════════ -->
+<section class="panel" id="panel-wage">
+  <h1 class="panel-title">시급·아르바이트 급여 계산기</h1>
+  <p class="panel-desc">시급과 근무 시간으로 주휴수당을 포함한 예상 급여를 계산합니다.</p>
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="wg-wage">시급 <span class="hint">원 · 2025년 최저시급 10,030원</span></label>
+        <input type="number" id="wg-wage" value="10030" min="0" step="10">
+      </div>
+      <div class="field">
+        <label for="wg-hours">하루 근무 시간 <span class="hint">시간</span></label>
+        <input type="number" id="wg-hours" value="6" min="0" max="24" step="0.5">
+      </div>
+      <div class="field">
+        <label for="wg-days">주 근무 일수 <span class="hint">일</span></label>
+        <input type="number" id="wg-days" value="5" min="0" max="7" step="1">
+      </div>
+      <button class="calc-btn" id="wg-run">급여 계산하기</button>
+    </div>
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">급여 명세 · 예상</span><span class="no" id="wg-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">월 예상 급여 (세전)</div>
+          <div class="amount"><span id="wg-month">—</span><span class="won">원</span></div>
+          <div class="sub" id="wg-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>주 소정근로시간</td><td id="wg-weekly-hours">—</td></tr>
+          <tr><td>주급 (근무분)</td><td id="wg-weekly-pay">—</td></tr>
+          <tr><td>주휴수당</td><td id="wg-holiday">—</td></tr>
+          <tr class="total"><td>주 총급여</td><td id="wg-weekly-total">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 주휴수당은 주 15시간 이상 근무 + 개근을 전제로 자동 포함해 계산합니다. 4대보험료·세금은 반영되지 않은 세전 금액입니다.</div>
+    </div>
+  </div>
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>주휴수당, 꼭 챙기세요</h2>
+    <p>1주 15시간 이상 근무하고 소정 근무일에 결근 없이 개근했다면, 근로기준법에 따라 <strong>유급 주휴일</strong>이 발생합니다. 주휴수당은 하루치 임금을 추가로 받는 개념으로, 아르바이트생도 조건을 충족하면 정규직과 동일하게 받을 권리가 있습니다.</p>
+    <table>
+      <tr><th>주 근무시간</th><th>주휴수당 대상</th></tr>
+      <tr><td>15시간 미만</td><td>미대상</td></tr>
+      <tr><td>15시간 이상 ~ 40시간 이하</td><td>대상 (근무시간 비례)</td></tr>
+      <tr><td>40시간 초과</td><td>대상 (1일 8시간 상한으로 계산)</td></tr>
+    </table>
+  </article>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>단숨</strong> · 본 사이트의 계산 결과는 참고용 간이 계산이며, 의학적 진단이나 급여 지급의 법적 근거로 사용할 수 없습니다.<br>
+    <a href="index.html">전체 도구</a> · <a href="about.html">소개</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
+  </div>
+</footer>
+
+<script>
+const set = (id, v) => document.getElementById(id).textContent = v;
+const fmt = n => Math.round(n).toLocaleString('ko-KR');
+const today = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+['bmi-date','bmr-date','wg-date'].forEach(id => set(id, 'NO. ' + today));
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0});
+  });
+});
+function bindSeg(segId) {
+  document.querySelectorAll('#' + segId + ' button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#' + segId + ' button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+    });
+  });
+}
+function segValue(segId) {
+  return document.querySelector('#' + segId + ' button[aria-pressed="true"]').dataset.v;
+}
+
+/* ══════════ 1. BMI ══════════ */
+function calcBmi() {
+  const heightCm = Number(document.getElementById('bmi-height').value) || 0;
+  const weightKg = Number(document.getElementById('bmi-weight').value) || 0;
+  if (heightCm <= 0 || weightKg <= 0) {
+    set('bmi-value', '값을 입력해주세요');
+    set('bmi-category', ''); set('bmi-standard', '—'); set('bmi-diff', '—');
+    return;
+  }
+  const heightM = heightCm / 100;
+  const bmi = weightKg / (heightM * heightM);
+  let category;
+  if (bmi < 18.5) category = '저체중';
+  else if (bmi < 23) category = '정상';
+  else if (bmi < 25) category = '비만전단계 (과체중)';
+  else if (bmi < 30) category = '1단계 비만';
+  else if (bmi < 35) category = '2단계 비만';
+  else category = '3단계 비만 (고도비만)';
+
+  const standardWeight = heightM * heightM * 22;
+  const diff = weightKg - standardWeight;
+
+  set('bmi-value', bmi.toFixed(1));
+  set('bmi-category', category);
+  set('bmi-standard', standardWeight.toFixed(1) + 'kg');
+  set('bmi-diff', (diff >= 0 ? '+' : '') + diff.toFixed(1) + 'kg');
+}
+document.getElementById('bmi-run').addEventListener('click', calcBmi);
+
+/* ══════════ 2. 기초대사량 ══════════ */
+bindSeg('bmr-sex');
+function calcBmr() {
+  const sex = segValue('bmr-sex');
+  const age = Number(document.getElementById('bmr-age').value) || 0;
+  const height = Number(document.getElementById('bmr-height').value) || 0;
+  const weight = Number(document.getElementById('bmr-weight').value) || 0;
+  const activity = Number(document.getElementById('bmr-activity').value);
+  if (age <= 0 || height <= 0 || weight <= 0) {
+    set('bmr-tdee', '값을 입력해주세요');
+    set('bmr-basal-sub', ''); set('bmr-bmr', '—'); set('bmr-cut', '—'); set('bmr-bulk', '—');
+    return;
+  }
+  const bmr = sex === 'm'
+    ? 10 * weight + 6.25 * height - 5 * age + 5
+    : 10 * weight + 6.25 * height - 5 * age - 161;
+  const tdee = bmr * activity;
+
+  set('bmr-tdee', fmt(tdee));
+  set('bmr-basal-sub', '기초대사량 ' + fmt(bmr) + 'kcal × 활동계수 ' + activity);
+  set('bmr-bmr', fmt(bmr) + ' kcal');
+  set('bmr-cut', fmt(Math.max(0, tdee - 500)) + ' kcal');
+  set('bmr-bulk', fmt(tdee + 500) + ' kcal');
+}
+document.getElementById('bmr-run').addEventListener('click', calcBmr);
+
+/* ══════════ 3. 알바 급여 ══════════ */
+function calcWage() {
+  const wage = Number(document.getElementById('wg-wage').value) || 0;
+  const dailyHours = Number(document.getElementById('wg-hours').value) || 0;
+  const days = Number(document.getElementById('wg-days').value) || 0;
+  if (wage <= 0 || dailyHours <= 0 || days <= 0) {
+    set('wg-month', '값을 입력해주세요');
+    set('wg-sub', ''); set('wg-weekly-hours', '—'); set('wg-weekly-pay', '—'); set('wg-holiday', '—'); set('wg-weekly-total', '—');
+    return;
+  }
+  const weeklyHours = dailyHours * days;
+  const weeklyPay = weeklyHours * wage;
+  const holidayPay = weeklyHours >= 15 ? Math.min(weeklyHours, 40) / 40 * 8 * wage : 0;
+  const weeklyTotal = weeklyPay + holidayPay;
+  const monthlyPay = weeklyTotal * 4.345; // 평균 월 주수
+
+  set('wg-month', fmt(monthlyPay));
+  set('wg-sub', weeklyHours >= 15 ? '주휴수당 포함' : '주 15시간 미만 · 주휴수당 미대상');
+  set('wg-weekly-hours', weeklyHours.toLocaleString() + '시간');
+  set('wg-weekly-pay', fmt(weeklyPay) + '원');
+  set('wg-holiday', fmt(holidayPay) + '원');
+  set('wg-weekly-total', fmt(weeklyTotal) + '원');
+}
+document.getElementById('wg-run').addEventListener('click', calcWage);
+
+/* 첫 화면 자동 계산 */
+calcBmi();
+calcBmr();
+calcWage();
+</script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단위 변환기 — 길이·무게·온도·부피 | 단숨</title>
+<meta name="description" content="길이, 무게, 온도, 부피 단위를 한 번에 변환합니다. cm↔inch, kg↔lb, 섭씨↔화씨 등 자주 쓰는 단위 변환을 무료로 제공합니다.">
+<meta name="keywords" content="단위 변환기, cm inch 변환, kg lb 변환, 섭씨 화씨 변환, 길이 변환, 무게 변환">
+<meta property="og:title" content="단위 변환기 — 단숨">
+<meta property="og:description" content="길이·무게·온도·부피 단위를 입력 한 번으로 모두 변환하세요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4d3a'/%3E%3Cpath d='M38 6 16 36h12l-4 22 24-30H36z' fill='%23b98a2e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2420;
+  --ink-soft:#4c5a53;
+  --paper:#f5f6f2;
+  --card:#ffffff;
+  --bill:#0f4d3a;
+  --bill-2:#17694f;
+  --bill-tint:#e7efe9;
+  --gold:#b98a2e;
+  --line:#dce0d9;
+  --danger:#a4432e;
+  --radius:10px;
+  --sans:'Noto Sans KR',-apple-system,sans-serif;
+  --serif:'Noto Serif KR',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
+a{color:var(--bill-2)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
+.logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
+.logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
+.page-nav{display:flex;align-items:center;gap:18px}
+.page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
+.page-nav a:hover{color:#fff}
+.page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
+.nav-drop{position:relative}
+.nav-drop summary{cursor:pointer;list-style:none;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-drop summary::-webkit-details-marker{display:none}
+.nav-drop summary::after{content:" ▾";font-size:.7em}
+.nav-drop summary:hover{color:#fff}
+.nav-drop[open] summary{color:#fff}
+.drop-menu{position:absolute;top:100%;right:0;margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:150px;z-index:60}
+.drop-menu a{display:block;padding:9px 12px;border-radius:6px;color:var(--ink)!important;text-decoration:none;font-size:.88rem;font-weight:500}
+.drop-menu a:hover{background:var(--bill-tint);color:var(--bill)!important}
+.drop-menu a[aria-current="page"]{color:var(--bill)!important;font-weight:700;background:var(--bill-tint)}
+@media(max-width:560px){
+  .head-inner{padding:12px 14px}
+  .page-nav{gap:10px}
+  .page-nav a,.nav-drop summary{font-size:.78rem}
+}
+nav.tabs{background:var(--bill);border-top:1px solid rgba(255,255,255,.15)}
+.tabs-inner{display:flex;max-width:880px;margin:0 auto;overflow-x:auto}
+.tab-btn{flex:1;min-width:96px;background:none;border:none;color:rgba(255,255,255,.7);font-family:var(--sans);font-size:.92rem;font-weight:500;padding:12px 8px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:#fff}
+.tab-btn[aria-selected="true"]{color:#fff;border-bottom-color:var(--gold);font-weight:700}
+.tab-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+main{padding:34px 0 60px}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.panel-desc{color:var(--ink-soft);font-size:.94rem;margin-bottom:22px}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:720px){.calc-grid{grid-template-columns:1fr}}
+
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.86rem;font-weight:700;margin-bottom:6px}
+.field .hint{font-weight:400;color:var(--ink-soft);font-size:.78rem;margin-left:4px}
+.field input[type=number],.field select{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:1rem;background:#fff;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.field input:focus,.field select:focus{outline:2px solid var(--bill-2);outline-offset:-1px;border-color:var(--bill-2)}
+.calc-btn{width:100%;padding:13px;background:var(--bill);color:#fff;border:none;border-radius:8px;
+  font-family:var(--sans);font-size:1.02rem;font-weight:700;cursor:pointer;margin-top:4px;transition:background .15s}
+.calc-btn:hover{background:var(--bill-2)}
+.calc-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.slip{background:var(--card);border:1px solid var(--bill);border-radius:var(--radius);overflow:hidden;position:relative}
+.slip::before{content:"";position:absolute;inset:5px;border:1px solid var(--bill-tint);border-radius:6px;pointer-events:none}
+.slip-head{background:var(--bill);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:baseline}
+.slip-head .t{font-size:.82rem;letter-spacing:.14em;font-weight:500}
+.slip-head .no{font-size:.72rem;opacity:.6;font-variant-numeric:tabular-nums}
+.slip-body{padding:20px}
+.slip-main{text-align:center;padding:10px 0 18px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+.slip-main .cap{font-size:.82rem;color:var(--ink-soft);letter-spacing:.1em;margin-bottom:2px}
+.slip-main .amount{font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--bill);font-variant-numeric:tabular-nums;line-height:1.25;word-break:keep-all}
+.slip-main .amount .won{font-size:1.1rem;margin-left:2px;color:var(--ink-soft)}
+.slip-rows{width:100%;border-collapse:collapse;font-size:.9rem}
+.slip-rows td{padding:7px 2px;border-bottom:1px solid #f0f2ee;font-variant-numeric:tabular-nums}
+.slip-rows td:last-child{text-align:right;font-weight:500}
+.slip-rows tr.current td{color:var(--bill);font-weight:700}
+.slip-note{font-size:.76rem;color:var(--ink-soft);padding:10px 20px 16px;line-height:1.5}
+
+.ad-slot{margin:30px 0;min-height:90px;display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--line);border-radius:var(--radius);color:#b9beb5;font-size:.8rem;letter-spacing:.1em}
+
+.content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-top:30px}
+.content h2{font-family:var(--serif);font-size:1.25rem;margin-bottom:12px;color:var(--bill)}
+.content p{font-size:.93rem;color:var(--ink);margin-bottom:10px}
+
+footer{background:var(--ink);color:#aab3ad;font-size:.8rem;padding:26px 20px;text-align:center;line-height:1.7}
+footer strong{color:#d7ddd8}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <a class="logo" href="index.html">단숨<small>DANSUM</small></a>
+    <nav class="page-nav" aria-label="사이트 메뉴">
+      <details class="nav-drop">
+        <summary>계산기</summary>
+        <div class="drop-menu">
+          <a href="index.html">전체 도구</a>
+          <a href="finance.html">연봉·재무</a>
+          <a href="date.html">날짜·시간</a>
+          <a href="text.html">텍스트·문서</a>
+          <a href="unit.html" aria-current="page">단위 변환</a>
+          <a href="life.html">생활·건강</a>
+        </div>
+      </details>
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+  <nav class="tabs" aria-label="계산기 선택">
+    <div class="tabs-inner" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="length">길이</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="weight">무게</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="temp">온도</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="volume">부피</button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<!-- ═══════════ 1. 길이 ═══════════ -->
+<section class="panel active" id="panel-length">
+  <h1 class="panel-title">길이 단위 변환</h1>
+  <p class="panel-desc">mm·cm·m·km와 inch·ft·yard·mile을 한 번에 변환합니다.</p>
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="len-value">값</label>
+        <input type="number" id="len-value" value="100" step="any">
+      </div>
+      <div class="field">
+        <label for="len-unit">단위</label>
+        <select id="len-unit">
+          <option value="mm">밀리미터 (mm)</option>
+          <option value="cm" selected>센티미터 (cm)</option>
+          <option value="m">미터 (m)</option>
+          <option value="km">킬로미터 (km)</option>
+          <option value="inch">인치 (in)</option>
+          <option value="ft">피트 (ft)</option>
+          <option value="yd">야드 (yd)</option>
+          <option value="mile">마일 (mi)</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="len-run">변환하기</button>
+    </div>
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">길이 변환 · 결과</span><span class="no" id="len-date"></span></div>
+      <div class="slip-body">
+        <table class="slip-rows" id="len-rows"></table>
+      </div>
+    </div>
+  </div>
+  <div class="ad-slot">AD</div>
+</section>
+
+<!-- ═══════════ 2. 무게 ═══════════ -->
+<section class="panel" id="panel-weight">
+  <h1 class="panel-title">무게 단위 변환</h1>
+  <p class="panel-desc">mg·g·kg·t과 oz·lb를 한 번에 변환합니다.</p>
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="wt-value">값</label>
+        <input type="number" id="wt-value" value="1" step="any">
+      </div>
+      <div class="field">
+        <label for="wt-unit">단위</label>
+        <select id="wt-unit">
+          <option value="mg">밀리그램 (mg)</option>
+          <option value="g">그램 (g)</option>
+          <option value="kg" selected>킬로그램 (kg)</option>
+          <option value="t">톤 (t)</option>
+          <option value="oz">온스 (oz)</option>
+          <option value="lb">파운드 (lb)</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="wt-run">변환하기</button>
+    </div>
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">무게 변환 · 결과</span><span class="no" id="wt-date"></span></div>
+      <div class="slip-body">
+        <table class="slip-rows" id="wt-rows"></table>
+      </div>
+    </div>
+  </div>
+  <div class="ad-slot">AD</div>
+</section>
+
+<!-- ═══════════ 3. 온도 ═══════════ -->
+<section class="panel" id="panel-temp">
+  <h1 class="panel-title">온도 단위 변환</h1>
+  <p class="panel-desc">섭씨·화씨·켈빈을 한 번에 변환합니다.</p>
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="tp-value">값</label>
+        <input type="number" id="tp-value" value="25" step="any">
+      </div>
+      <div class="field">
+        <label for="tp-unit">단위</label>
+        <select id="tp-unit">
+          <option value="c" selected>섭씨 (°C)</option>
+          <option value="f">화씨 (°F)</option>
+          <option value="k">켈빈 (K)</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="tp-run">변환하기</button>
+    </div>
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">온도 변환 · 결과</span><span class="no" id="tp-date"></span></div>
+      <div class="slip-body">
+        <table class="slip-rows" id="tp-rows"></table>
+      </div>
+    </div>
+  </div>
+  <div class="ad-slot">AD</div>
+</section>
+
+<!-- ═══════════ 4. 부피 ═══════════ -->
+<section class="panel" id="panel-volume">
+  <h1 class="panel-title">부피 단위 변환</h1>
+  <p class="panel-desc">mL·L과 미국식 갤런·컵·액량온스를 한 번에 변환합니다.</p>
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="vol-value">값</label>
+        <input type="number" id="vol-value" value="1" step="any">
+      </div>
+      <div class="field">
+        <label for="vol-unit">단위</label>
+        <select id="vol-unit">
+          <option value="mL">밀리리터 (mL)</option>
+          <option value="L" selected>리터 (L)</option>
+          <option value="gal">갤런 (gal, US)</option>
+          <option value="cup">컵 (cup, US)</option>
+          <option value="floz">액량온스 (fl oz, US)</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="vol-run">변환하기</button>
+    </div>
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">부피 변환 · 결과</span><span class="no" id="vol-date"></span></div>
+      <div class="slip-body">
+        <table class="slip-rows" id="vol-rows"></table>
+      </div>
+    </div>
+  </div>
+  <div class="ad-slot">AD</div>
+  <article class="content">
+    <h2>미국식 단위, 왜 필요한가요?</h2>
+    <p>해외 직구, 요리 레시피, 여행 시 접하는 인치·파운드·화씨·갤런 같은 단위는 한국의 미터법과 달라 헷갈리기 쉽습니다. 위 계산기로 자주 쓰는 단위를 빠르게 확인하세요.</p>
+  </article>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>단숨</strong> · 변환 결과는 반올림되어 표시될 수 있습니다.<br>
+    <a href="index.html">전체 도구</a> · <a href="about.html">소개</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
+  </div>
+</footer>
+
+<script>
+const set = (id, v) => document.getElementById(id).textContent = v;
+const today = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+['len-date','wt-date','tp-date','vol-date'].forEach(id => set(id, 'NO. ' + today));
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0});
+  });
+});
+
+function fmtNum(n) {
+  if (!isFinite(n)) return '—';
+  return n.toLocaleString('ko-KR', { maximumFractionDigits: 6 });
+}
+
+function renderRows(tableId, rows, currentUnit) {
+  const table = document.getElementById(tableId);
+  table.innerHTML = rows.map(r =>
+    '<tr class="' + (r.unit === currentUnit ? 'current' : '') + '"><td>' + r.label + '</td><td>' + fmtNum(r.value) + '</td></tr>'
+  ).join('');
+}
+
+/* ══════════ 1. 길이 ══════════ */
+const LENGTH = {
+  mm:   { factor: 0.001,     label: '밀리미터 (mm)' },
+  cm:   { factor: 0.01,      label: '센티미터 (cm)' },
+  m:    { factor: 1,         label: '미터 (m)' },
+  km:   { factor: 1000,      label: '킬로미터 (km)' },
+  inch: { factor: 0.0254,    label: '인치 (in)' },
+  ft:   { factor: 0.3048,    label: '피트 (ft)' },
+  yd:   { factor: 0.9144,    label: '야드 (yd)' },
+  mile: { factor: 1609.344,  label: '마일 (mi)' }
+};
+function calcLength() {
+  const value = Number(document.getElementById('len-value').value) || 0;
+  const unit = document.getElementById('len-unit').value;
+  const baseMeters = value * LENGTH[unit].factor;
+  const rows = Object.keys(LENGTH).map(u => ({ unit: u, label: LENGTH[u].label, value: baseMeters / LENGTH[u].factor }));
+  renderRows('len-rows', rows, unit);
+}
+document.getElementById('len-run').addEventListener('click', calcLength);
+
+/* ══════════ 2. 무게 ══════════ */
+const WEIGHT = {
+  mg: { factor: 0.001,    label: '밀리그램 (mg)' },
+  g:  { factor: 1,        label: '그램 (g)' },
+  kg: { factor: 1000,     label: '킬로그램 (kg)' },
+  t:  { factor: 1000000,  label: '톤 (t)' },
+  oz: { factor: 28.3495,  label: '온스 (oz)' },
+  lb: { factor: 453.592,  label: '파운드 (lb)' }
+};
+function calcWeight() {
+  const value = Number(document.getElementById('wt-value').value) || 0;
+  const unit = document.getElementById('wt-unit').value;
+  const baseGrams = value * WEIGHT[unit].factor;
+  const rows = Object.keys(WEIGHT).map(u => ({ unit: u, label: WEIGHT[u].label, value: baseGrams / WEIGHT[u].factor }));
+  renderRows('wt-rows', rows, unit);
+}
+document.getElementById('wt-run').addEventListener('click', calcWeight);
+
+/* ══════════ 3. 온도 ══════════ */
+function calcTemp() {
+  const value = Number(document.getElementById('tp-value').value) || 0;
+  const unit = document.getElementById('tp-unit').value;
+  let celsius;
+  if (unit === 'c') celsius = value;
+  else if (unit === 'f') celsius = (value - 32) * 5 / 9;
+  else celsius = value - 273.15;
+
+  const rows = [
+    { unit: 'c', label: '섭씨 (°C)', value: celsius },
+    { unit: 'f', label: '화씨 (°F)', value: celsius * 9 / 5 + 32 },
+    { unit: 'k', label: '켈빈 (K)', value: celsius + 273.15 }
+  ];
+  renderRows('tp-rows', rows, unit);
+}
+document.getElementById('tp-run').addEventListener('click', calcTemp);
+
+/* ══════════ 4. 부피 ══════════ */
+const VOLUME = {
+  mL:   { factor: 0.001,     label: '밀리리터 (mL)' },
+  L:    { factor: 1,         label: '리터 (L)' },
+  gal:  { factor: 3.78541,   label: '갤런 (gal, US)' },
+  cup:  { factor: 0.236588,  label: '컵 (cup, US)' },
+  floz: { factor: 0.0295735, label: '액량온스 (fl oz, US)' }
+};
+function calcVolume() {
+  const value = Number(document.getElementById('vol-value').value) || 0;
+  const unit = document.getElementById('vol-unit').value;
+  const baseLiters = value * VOLUME[unit].factor;
+  const rows = Object.keys(VOLUME).map(u => ({ unit: u, label: VOLUME[u].label, value: baseLiters / VOLUME[u].factor }));
+  renderRows('vol-rows', rows, unit);
+}
+document.getElementById('vol-run').addEventListener('click', calcVolume);
+
+/* 첫 화면 자동 계산 */
+calcLength();
+calcWeight();
+calcTemp();
+calcVolume();
+</script>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>날짜·시간 계산기 — D-Day·날짜 계산·나이 계산 | 단숨</title>
+<meta name="description" content="D-Day 계산기, 날짜 더하기·빼기 계산기, 두 날짜 사이 기간 계산기, 만 나이 계산기를 무료로 제공합니다. 별도 설치 없이 바로 계산하세요.">
+<meta name="keywords" content="디데이 계산기, 날짜 계산기, 만 나이 계산기, 날짜 차이 계산, 두 날짜 사이 일수">
+<meta property="og:title" content="날짜·시간 계산기 — 단숨">
+<meta property="og:description" content="D-Day, 날짜 더하기·빼기, 두 날짜 사이 기간, 만 나이까지 한 번에 계산하세요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4d3a'/%3E%3Cpath d='M38 6 16 36h12l-4 22 24-30H36z' fill='%23b98a2e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2420;
+  --ink-soft:#4c5a53;
+  --paper:#f5f6f2;
+  --card:#ffffff;
+  --bill:#0f4d3a;
+  --bill-2:#17694f;
+  --bill-tint:#e7efe9;
+  --gold:#b98a2e;
+  --line:#dce0d9;
+  --danger:#a4432e;
+  --radius:10px;
+  --sans:'Noto Sans KR',-apple-system,sans-serif;
+  --serif:'Noto Serif KR',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
+a{color:var(--bill-2)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
+.logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
+.logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
+.page-nav{display:flex;align-items:center;gap:18px}
+.page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
+.page-nav a:hover{color:#fff}
+.page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
+.nav-drop{position:relative}
+.nav-drop summary{cursor:pointer;list-style:none;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-drop summary::-webkit-details-marker{display:none}
+.nav-drop summary::after{content:" ▾";font-size:.7em}
+.nav-drop summary:hover{color:#fff}
+.nav-drop[open] summary{color:#fff}
+.drop-menu{position:absolute;top:100%;right:0;margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:150px;z-index:60}
+.drop-menu a{display:block;padding:9px 12px;border-radius:6px;color:var(--ink)!important;text-decoration:none;font-size:.88rem;font-weight:500}
+.drop-menu a:hover{background:var(--bill-tint);color:var(--bill)!important}
+.drop-menu a[aria-current="page"]{color:var(--bill)!important;font-weight:700;background:var(--bill-tint)}
+@media(max-width:560px){
+  .head-inner{padding:12px 14px}
+  .page-nav{gap:10px}
+  .page-nav a,.nav-drop summary{font-size:.78rem}
+}
+nav.tabs{background:var(--bill);border-top:1px solid rgba(255,255,255,.15)}
+.tabs-inner{display:flex;max-width:880px;margin:0 auto;overflow-x:auto}
+.tab-btn{flex:1;min-width:96px;background:none;border:none;color:rgba(255,255,255,.7);font-family:var(--sans);font-size:.92rem;font-weight:500;padding:12px 8px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:#fff}
+.tab-btn[aria-selected="true"]{color:#fff;border-bottom-color:var(--gold);font-weight:700}
+.tab-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+main{padding:34px 0 60px}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.panel-desc{color:var(--ink-soft);font-size:.94rem;margin-bottom:22px}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:720px){.calc-grid{grid-template-columns:1fr}}
+
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.86rem;font-weight:700;margin-bottom:6px}
+.field .hint{font-weight:400;color:var(--ink-soft);font-size:.78rem;margin-left:4px}
+.field input[type=number],.field input[type=date],.field select{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:1rem;background:#fff;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.field input:focus,.field select:focus{outline:2px solid var(--bill-2);outline-offset:-1px;border-color:var(--bill-2)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;padding:10px;border:none;background:#fff;font-family:var(--sans);font-size:.9rem;cursor:pointer;color:var(--ink-soft)}
+.seg button[aria-pressed="true"]{background:var(--bill-tint);color:var(--bill);font-weight:700}
+.seg button:focus-visible{outline:2px solid var(--bill-2);outline-offset:-2px}
+.calc-btn{width:100%;padding:13px;background:var(--bill);color:#fff;border:none;border-radius:8px;
+  font-family:var(--sans);font-size:1.02rem;font-weight:700;cursor:pointer;margin-top:4px;transition:background .15s}
+.calc-btn:hover{background:var(--bill-2)}
+.calc-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.slip{background:var(--card);border:1px solid var(--bill);border-radius:var(--radius);overflow:hidden;position:relative}
+.slip::before{content:"";position:absolute;inset:5px;border:1px solid var(--bill-tint);border-radius:6px;pointer-events:none}
+.slip-head{background:var(--bill);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:baseline}
+.slip-head .t{font-size:.82rem;letter-spacing:.14em;font-weight:500}
+.slip-head .no{font-size:.72rem;opacity:.6;font-variant-numeric:tabular-nums}
+.slip-body{padding:20px}
+.slip-main{text-align:center;padding:10px 0 18px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+.slip-main .cap{font-size:.82rem;color:var(--ink-soft);letter-spacing:.1em;margin-bottom:2px}
+.slip-main .amount{font-family:var(--serif);font-size:2.2rem;font-weight:700;color:var(--bill);font-variant-numeric:tabular-nums;line-height:1.25;word-break:keep-all}
+.slip-main .amount .won{font-size:1.1rem;margin-left:2px;color:var(--ink-soft)}
+.slip-main .sub{font-size:.85rem;color:var(--ink-soft);margin-top:4px}
+.slip-rows{width:100%;border-collapse:collapse;font-size:.9rem}
+.slip-rows td{padding:7px 2px;border-bottom:1px solid #f0f2ee;font-variant-numeric:tabular-nums}
+.slip-rows td:last-child{text-align:right;font-weight:500}
+.slip-rows tr.total td{border-bottom:none;border-top:2px solid var(--line);font-weight:700;padding-top:10px}
+.slip-note{font-size:.76rem;color:var(--ink-soft);padding:10px 20px 16px;line-height:1.5}
+
+.ad-slot{margin:30px 0;min-height:90px;display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--line);border-radius:var(--radius);color:#b9beb5;font-size:.8rem;letter-spacing:.1em}
+
+.content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-top:30px}
+.content h2{font-family:var(--serif);font-size:1.25rem;margin-bottom:12px;color:var(--bill)}
+.content h3{font-size:1.02rem;margin:22px 0 8px}
+.content p{font-size:.93rem;color:var(--ink);margin-bottom:10px}
+.content ul,.content ol{padding-left:22px;font-size:.93rem;margin-bottom:10px}
+.content li{margin-bottom:4px}
+details.faq{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff}
+details.faq summary{padding:12px 14px;cursor:pointer;font-weight:700;font-size:.92rem;list-style:none}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::before{content:"Q. ";color:var(--gold)}
+details.faq[open] summary{border-bottom:1px solid var(--line)}
+details.faq .a{padding:12px 14px;font-size:.9rem;color:var(--ink-soft)}
+
+footer{background:var(--ink);color:#aab3ad;font-size:.8rem;padding:26px 20px;text-align:center;line-height:1.7}
+footer strong{color:#d7ddd8}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <a class="logo" href="index.html">단숨<small>DANSUM</small></a>
+    <nav class="page-nav" aria-label="사이트 메뉴">
+      <details class="nav-drop">
+        <summary>계산기</summary>
+        <div class="drop-menu">
+          <a href="index.html">전체 도구</a>
+          <a href="finance.html">연봉·재무</a>
+          <a href="date.html" aria-current="page">날짜·시간</a>
+          <a href="text.html">텍스트·문서</a>
+          <a href="unit.html">단위 변환</a>
+          <a href="life.html">생활·건강</a>
+        </div>
+      </details>
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+  <nav class="tabs" aria-label="계산기 선택">
+    <div class="tabs-inner" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="dday">D-Day</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="dcalc">날짜 계산</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="between">두 날짜 사이</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="age">나이 계산</button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<!-- ═══════════ 1. D-Day ═══════════ -->
+<section class="panel active" id="panel-dday">
+  <h1 class="panel-title">D-Day 계산기</h1>
+  <p class="panel-desc">기준일로부터 목표일까지 남은(또는 지난) 일수를 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="dday-base">기준일</label>
+        <input type="date" id="dday-base">
+      </div>
+      <div class="field">
+        <label for="dday-target">목표일</label>
+        <input type="date" id="dday-target">
+      </div>
+      <button class="calc-btn" id="dday-run">D-Day 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">디데이 · 예상</span><span class="no" id="dday-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">목표일까지</div>
+          <div class="amount" id="dday-result">—</div>
+          <div class="sub" id="dday-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>기준일</td><td id="dd-base">—</td></tr>
+          <tr><td>목표일</td><td id="dd-target">—</td></tr>
+          <tr class="total"><td>차이 일수</td><td id="dd-diff">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 기준일 당일은 0일로 계산합니다.</div>
+    </div>
+  </div>
+
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>D-Day, 어떻게 세는 걸까?</h2>
+    <p>디데이는 특정 목표일까지 남은 날짜를 세는 방식입니다. 목표일이 아직 오지 않았다면 <strong>D-숫자</strong>, 이미 지났다면 <strong>D+숫자</strong>, 당일이면 <strong>D-DAY</strong>로 표시합니다. 시험일, 결혼기념일, 계약 만료일, 프로젝트 마감일 등을 관리할 때 유용합니다.</p>
+    <h3>자주 묻는 질문</h3>
+    <details class="faq"><summary>기준일을 오늘이 아닌 다른 날짜로 계산할 수 있나요?</summary><div class="a">네. 기준일 입력란에 원하는 날짜를 직접 지정하면 그 날짜를 기준으로 목표일까지의 차이를 계산합니다.</div></details>
+    <details class="faq"><summary>목표일이 기준일보다 이전이면 어떻게 되나요?</summary><div class="a">이미 지난 날짜이므로 D+숫자로 표시되며, 차이 일수는 지난 일수를 의미합니다.</div></details>
+  </article>
+</section>
+
+<!-- ═══════════ 2. 날짜 계산 ═══════════ -->
+<section class="panel" id="panel-dcalc">
+  <h1 class="panel-title">날짜 계산기</h1>
+  <p class="panel-desc">기준일에 일·주·개월·년을 더하거나 빼서 특정 날짜를 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="dc-base">기준일</label>
+        <input type="date" id="dc-base">
+      </div>
+      <div class="field">
+        <label>연산</label>
+        <div class="seg" id="dc-mode">
+          <button type="button" aria-pressed="true" data-v="plus">더하기</button>
+          <button type="button" aria-pressed="false" data-v="minus">빼기</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="dc-amount">숫자</label>
+        <input type="number" id="dc-amount" value="100" min="0" step="1">
+      </div>
+      <div class="field">
+        <label for="dc-unit">단위</label>
+        <select id="dc-unit">
+          <option value="day">일</option>
+          <option value="week">주</option>
+          <option value="month">개월</option>
+          <option value="year">년</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="dc-run">날짜 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">날짜 계산 · 결과</span><span class="no" id="dc-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">계산된 날짜</div>
+          <div class="amount" id="dc-result">—</div>
+          <div class="sub" id="dc-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>기준일</td><td id="dc-base-out">—</td></tr>
+          <tr class="total"><td>결과일</td><td id="dc-result-out">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 개월·년 단위는 달력 기준으로 계산되며, 말일 부근에서는 실제 일수와 하루 이상 차이가 날 수 있습니다.</div>
+    </div>
+  </div>
+
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>이런 경우에 활용해보세요</h2>
+    <ul>
+      <li>계약일로부터 <strong>30일 후</strong> 만료일 확인</li>
+      <li>수술 후 <strong>100일</strong> 되는 날 확인</li>
+      <li>오늘로부터 <strong>3개월 전</strong> 날짜 확인 (서류 발급 기준일 등)</li>
+    </ul>
+  </article>
+</section>
+
+<!-- ═══════════ 3. 두 날짜 사이 ═══════════ -->
+<section class="panel" id="panel-between">
+  <h1 class="panel-title">두 날짜 사이 계산기</h1>
+  <p class="panel-desc">시작일과 종료일 사이의 총 일수와 평일 수를 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="bt-start">시작일</label>
+        <input type="date" id="bt-start">
+      </div>
+      <div class="field">
+        <label for="bt-end">종료일</label>
+        <input type="date" id="bt-end">
+      </div>
+      <button class="calc-btn" id="bt-run">기간 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">기간 계산 · 결과</span><span class="no" id="bt-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">총 일수</div>
+          <div class="amount"><span id="bt-days">—</span><span class="won" id="bt-days-unit"></span></div>
+          <div class="sub" id="bt-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>시작일</td><td id="bt-start-out">—</td></tr>
+          <tr><td>종료일</td><td id="bt-end-out">—</td></tr>
+          <tr><td>평일 (월~금)</td><td id="bt-weekday">—</td></tr>
+          <tr class="total"><td>주말 (토·일)</td><td id="bt-weekend">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 시작일을 포함하고 종료일은 포함하지 않는 방식으로 일수를 셉니다. 공휴일은 반영되지 않습니다.</div>
+    </div>
+  </div>
+
+  <div class="ad-slot">AD</div>
+</section>
+
+<!-- ═══════════ 4. 나이 계산 ═══════════ -->
+<section class="panel" id="panel-age">
+  <h1 class="panel-title">나이 계산기</h1>
+  <p class="panel-desc">2023년부터 공식 기준이 된 만 나이와 세는 나이를 함께 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="age-birth">생년월일</label>
+        <input type="date" id="age-birth">
+      </div>
+      <div class="field">
+        <label for="age-ref">기준일 <span class="hint">보통 오늘</span></label>
+        <input type="date" id="age-ref">
+      </div>
+      <button class="calc-btn" id="age-run">나이 계산하기</button>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">나이 계산 · 결과</span><span class="no" id="age-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">만 나이</div>
+          <div class="amount"><span id="age-man">—</span><span class="won">세</span></div>
+          <div class="sub" id="age-sub"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>생년월일</td><td id="age-birth-out">—</td></tr>
+          <tr><td>세는 나이 (연 나이)</td><td id="age-se">—</td></tr>
+          <tr class="total"><td>다음 생일까지</td><td id="age-next">—</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 만 나이는 생일이 지나지 않았으면 세는 나이보다 1~2세 적습니다.</div>
+    </div>
+  </div>
+
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>만 나이와 세는 나이, 무엇이 다른가요?</h2>
+    <p><strong>만 나이</strong>는 태어난 날을 0세로 하여 생일이 지날 때마다 1세씩 늘어나는 국제 표준 나이 계산법입니다. 2023년 6월부터 법적·행정적 나이 기준으로 통일되었습니다. <strong>세는 나이</strong>는 태어나자마자 1세이고 해가 바뀔 때마다 1세씩 느는, 한국에서 관습적으로 쓰이던 계산법입니다.</p>
+  </article>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>단숨</strong> · 계산 결과는 참고용이며 공휴일 등 일부 조건은 반영되지 않을 수 있습니다.<br>
+    <a href="index.html">전체 도구</a> · <a href="about.html">소개</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
+  </div>
+</footer>
+
+<script>
+const set = (id, v) => document.getElementById(id).textContent = v;
+const dowNames = ['일','월','화','수','목','금','토'];
+const pDate = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const fmtDate = d => d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0') + ' (' + dowNames[d.getDay()] + ')';
+const toInputValue = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
+function ymdDiff(a, b) {
+  // b가 a보다 같거나 이후라고 가정
+  let y = b.getFullYear() - a.getFullYear();
+  let m = b.getMonth() - a.getMonth();
+  let d = b.getDate() - a.getDate();
+  if (d < 0) {
+    m--;
+    d += new Date(b.getFullYear(), b.getMonth(), 0).getDate();
+  }
+  if (m < 0) { y--; m += 12; }
+  return { y, m, d };
+}
+
+const todayStr = toInputValue(new Date());
+['dday-base','dc-base','age-ref'].forEach(id => document.getElementById(id).value = todayStr);
+const in100 = new Date(); in100.setDate(in100.getDate() + 100);
+document.getElementById('dday-target').value = toInputValue(in100);
+const oneYearAgo = new Date(); oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+document.getElementById('bt-start').value = toInputValue(oneYearAgo);
+document.getElementById('bt-end').value = todayStr;
+document.getElementById('age-birth').value = '1995-01-01';
+
+const todayLabel = 'NO. ' + todayStr.replace(/-/g, '.');
+['dday-date','dc-date','bt-date','age-date'].forEach(id => set(id, todayLabel));
+
+/* ── 탭 전환 ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0});
+  });
+});
+
+function bindSeg(segId) {
+  document.querySelectorAll('#' + segId + ' button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#' + segId + ' button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+    });
+  });
+}
+function segValue(segId) {
+  return document.querySelector('#' + segId + ' button[aria-pressed="true"]').dataset.v;
+}
+
+/* ══════════ 1. D-Day ══════════ */
+function calcDday() {
+  const baseStr = document.getElementById('dday-base').value;
+  const targetStr = document.getElementById('dday-target').value;
+  if (!baseStr || !targetStr) {
+    set('dday-result', '날짜를 입력해주세요');
+    set('dday-sub', ''); set('dd-base', '—'); set('dd-target', '—'); set('dd-diff', '—');
+    return;
+  }
+  const base = pDate(baseStr), target = pDate(targetStr);
+  const diff = Math.round((target - base) / 86400000);
+  let label = diff === 0 ? 'D-DAY' : (diff > 0 ? 'D-' + diff : 'D+' + Math.abs(diff));
+  set('dday-result', label);
+  set('dday-sub', fmtDate(target));
+  set('dd-base', fmtDate(base));
+  set('dd-target', fmtDate(target));
+  set('dd-diff', Math.abs(diff).toLocaleString() + '일');
+}
+document.getElementById('dday-run').addEventListener('click', calcDday);
+
+/* ══════════ 2. 날짜 계산 ══════════ */
+bindSeg('dc-mode');
+function calcDateCalc() {
+  const baseStr = document.getElementById('dc-base').value;
+  const amount = Number(document.getElementById('dc-amount').value) || 0;
+  const unit = document.getElementById('dc-unit').value;
+  const mode = segValue('dc-mode');
+  if (!baseStr) {
+    set('dc-result', '날짜를 입력해주세요');
+    set('dc-sub', ''); set('dc-base-out', '—'); set('dc-result-out', '—');
+    return;
+  }
+  const base = pDate(baseStr);
+  const signedAmount = mode === 'plus' ? amount : -amount;
+  const result = new Date(base);
+  if (unit === 'day') result.setDate(result.getDate() + signedAmount);
+  else if (unit === 'week') result.setDate(result.getDate() + signedAmount * 7);
+  else if (unit === 'month') result.setMonth(result.getMonth() + signedAmount);
+  else result.setFullYear(result.getFullYear() + signedAmount);
+
+  const unitLabel = {day:'일', week:'주', month:'개월', year:'년'}[unit];
+  set('dc-result', fmtDate(result));
+  set('dc-sub', fmtDate(base) + '로부터 ' + amount + unitLabel + ' ' + (mode === 'plus' ? '후' : '전'));
+  set('dc-base-out', fmtDate(base));
+  set('dc-result-out', fmtDate(result));
+}
+document.getElementById('dc-run').addEventListener('click', calcDateCalc);
+
+/* ══════════ 3. 두 날짜 사이 ══════════ */
+function calcBetween() {
+  const startStr = document.getElementById('bt-start').value;
+  const endStr = document.getElementById('bt-end').value;
+  if (!startStr || !endStr) {
+    set('bt-days', '날짜를 입력해주세요'); set('bt-days-unit', '');
+    set('bt-sub', ''); set('bt-start-out', '—'); set('bt-end-out', '—'); set('bt-weekday', '—'); set('bt-weekend', '—');
+    return;
+  }
+  let start = pDate(startStr), end = pDate(endStr);
+  if (end < start) { const t = start; start = end; end = t; }
+  const totalDays = Math.round((end - start) / 86400000);
+  const { y, m, d } = ymdDiff(start, end);
+
+  let weekday = 0, weekend = 0;
+  const cur = new Date(start);
+  while (cur < end) {
+    const wd = cur.getDay();
+    if (wd === 0 || wd === 6) weekend++; else weekday++;
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  set('bt-days', totalDays.toLocaleString());
+  set('bt-days-unit', '일');
+  set('bt-sub', '약 ' + y + '년 ' + m + '개월 ' + d + '일');
+  set('bt-start-out', fmtDate(start));
+  set('bt-end-out', fmtDate(end));
+  set('bt-weekday', weekday.toLocaleString() + '일');
+  set('bt-weekend', weekend.toLocaleString() + '일');
+}
+document.getElementById('bt-run').addEventListener('click', calcBetween);
+
+/* ══════════ 4. 나이 계산 ══════════ */
+function calcAge() {
+  const birthStr = document.getElementById('age-birth').value;
+  const refStr = document.getElementById('age-ref').value;
+  if (!birthStr || !refStr) {
+    set('age-man', '—'); set('age-sub', '날짜를 입력해주세요');
+    set('age-birth-out', '—'); set('age-se', '—'); set('age-next', '—');
+    return;
+  }
+  const birth = pDate(birthStr), ref = pDate(refStr);
+  if (ref < birth) {
+    set('age-man', '—'); set('age-sub', '기준일은 생년월일 이후여야 합니다');
+    set('age-birth-out', fmtDate(birth)); set('age-se', '—'); set('age-next', '—');
+    return;
+  }
+  const { y: manAge, m, d } = ymdDiff(birth, ref);
+  const seAge = ref.getFullYear() - birth.getFullYear() + 1;
+
+  let nextBday = new Date(ref.getFullYear(), birth.getMonth(), birth.getDate());
+  if (nextBday < ref) nextBday.setFullYear(ref.getFullYear() + 1);
+  const dToNext = Math.round((nextBday - ref) / 86400000);
+
+  set('age-man', manAge);
+  set('age-sub', manAge + '세 ' + m + '개월 ' + d + '일');
+  set('age-birth-out', fmtDate(birth));
+  set('age-se', seAge + '세');
+  set('age-next', dToNext === 0 ? '오늘!' : 'D-' + dToNext);
+}
+document.getElementById('age-run').addEventListener('click', calcAge);
+
+/* 첫 화면 자동 계산 */
+calcDday();
+calcDateCalc();
+calcBetween();
+calcAge();
+</script>
+</body>
+</html>

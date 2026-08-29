@@ -36,11 +36,25 @@ header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-sh
 .head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
 .logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
 .logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
-.page-nav{display:flex;gap:18px}
+.page-nav{display:flex;align-items:center;gap:18px}
 .page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
 .page-nav a:hover{color:#fff}
 .page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
-@media(max-width:560px){.page-nav{display:none}}
+.nav-drop{position:relative}
+.nav-drop summary{cursor:pointer;list-style:none;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-drop summary::-webkit-details-marker{display:none}
+.nav-drop summary::after{content:" ▾";font-size:.7em}
+.nav-drop summary:hover{color:#fff}
+.nav-drop[open] summary{color:#fff}
+.drop-menu{position:absolute;top:100%;right:0;margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:150px;z-index:60}
+.drop-menu a{display:block;padding:9px 12px;border-radius:6px;color:var(--ink)!important;text-decoration:none;font-size:.88rem;font-weight:500}
+.drop-menu a:hover{background:var(--bill-tint);color:var(--bill)!important}
+.drop-menu a[aria-current="page"]{color:var(--bill)!important;font-weight:700;background:var(--bill-tint)}
+@media(max-width:560px){
+  .head-inner{padding:12px 14px}
+  .page-nav{gap:10px}
+  .page-nav a,.nav-drop summary{font-size:.78rem}
+}
 
 main{padding:34px 0 60px}
 .page-title{font-family:var(--serif);font-size:1.8rem;font-weight:700;margin-bottom:4px}
@@ -69,7 +83,17 @@ footer strong{color:#d7ddd8}
   <div class="head-inner">
     <a class="logo" href="index.html">단숨<small>DANSUM</small></a>
     <nav class="page-nav" aria-label="사이트 메뉴">
-      <a href="index.html">계산기</a>
+      <details class="nav-drop">
+        <summary>계산기</summary>
+        <div class="drop-menu">
+          <a href="index.html">전체 도구</a>
+          <a href="finance.html">연봉·재무</a>
+          <a href="date.html">날짜·시간</a>
+          <a href="text.html">텍스트·문서</a>
+          <a href="unit.html">단위 변환</a>
+          <a href="life.html">생활·건강</a>
+        </div>
+      </details>
       <a href="about.html">소개</a>
       <a href="contact.html">문의</a>
     </nav>
@@ -82,7 +106,7 @@ footer strong{color:#d7ddd8}
 
   <article class="content">
     <h2>1. 수집하는 개인정보 항목</h2>
-    <p>본 사이트는 연봉 실수령액, 퇴직금, 대출 상환금, 예금·적금 이자를 계산하는 도구를 제공합니다. 계산기에 입력하는 금액·날짜 등의 정보는 <strong>이용자의 브라우저 내에서만 처리</strong>되며, 서버로 전송되거나 저장되지 않습니다.</p>
+    <p>본 사이트는 연봉·재무, 날짜·시간, 텍스트·문서, 단위 변환, 생활·건강 등 다양한 계산 도구를 제공합니다. 계산기에 입력하는 금액·날짜·텍스트 등의 정보는 <strong>이용자의 브라우저 내에서만 처리</strong>되며, 서버로 전송되거나 저장되지 않습니다.</p>
     <p>다만 사이트 이용 과정에서 아래와 같은 정보가 자동으로 수집될 수 있습니다.</p>
     <ul>
       <li>방문 일시, 접속 IP, 브라우저 종류 및 OS 정보</li>
@@ -127,7 +151,7 @@ footer strong{color:#d7ddd8}
 <footer>
   <div class="wrap">
     <strong>단숨</strong> · 본 사이트의 계산 결과는 참고용 간이 계산이며, 실제 금액은 회사 급여 규정·세법 개정·금융기관 정책에 따라 달라질 수 있습니다.<br>
-    <a href="index.html">계산기</a> · <a href="about.html">소개</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
+    <a href="index.html">전체 도구</a> · <a href="about.html">소개</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
   </div>
 </footer>
 

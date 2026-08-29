@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>텍스트·문서 도구 — 글자수 세기·텍스트 변환 | 단숨</title>
+<meta name="description" content="공백 포함·제외 글자수 세기, 자기소개서 글자수 제한 확인, 대소문자 변환, 공백·줄바꿈 정리 등 텍스트 도구를 무료로 제공합니다.">
+<meta name="keywords" content="글자수 세기, 글자수 계산기, 자소서 글자수, 텍스트 변환, 공백 제거">
+<meta property="og:title" content="텍스트·문서 도구 — 단숨">
+<meta property="og:description" content="글자수 세기와 텍스트 변환을 브라우저에서 바로, 서버 전송 없이 처리하세요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4d3a'/%3E%3Cpath d='M38 6 16 36h12l-4 22 24-30H36z' fill='%23b98a2e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2420;
+  --ink-soft:#4c5a53;
+  --paper:#f5f6f2;
+  --card:#ffffff;
+  --bill:#0f4d3a;
+  --bill-2:#17694f;
+  --bill-tint:#e7efe9;
+  --gold:#b98a2e;
+  --line:#dce0d9;
+  --danger:#a4432e;
+  --radius:10px;
+  --sans:'Noto Sans KR',-apple-system,sans-serif;
+  --serif:'Noto Serif KR',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
+a{color:var(--bill-2)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+header{background:var(--bill);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.head-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
+.logo{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em;color:#fff;text-decoration:none}
+.logo small{font-family:var(--sans);font-weight:400;font-size:.72rem;opacity:.75;display:block;letter-spacing:.08em;margin-top:-2px}
+.page-nav{display:flex;align-items:center;gap:18px}
+.page-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
+.page-nav a:hover{color:#fff}
+.page-nav a[aria-current="page"]{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px}
+.nav-drop{position:relative}
+.nav-drop summary{cursor:pointer;list-style:none;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-drop summary::-webkit-details-marker{display:none}
+.nav-drop summary::after{content:" ▾";font-size:.7em}
+.nav-drop summary:hover{color:#fff}
+.nav-drop[open] summary{color:#fff}
+.drop-menu{position:absolute;top:100%;right:0;margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:150px;z-index:60}
+.drop-menu a{display:block;padding:9px 12px;border-radius:6px;color:var(--ink)!important;text-decoration:none;font-size:.88rem;font-weight:500}
+.drop-menu a:hover{background:var(--bill-tint);color:var(--bill)!important}
+.drop-menu a[aria-current="page"]{color:var(--bill)!important;font-weight:700;background:var(--bill-tint)}
+@media(max-width:560px){
+  .head-inner{padding:12px 14px}
+  .page-nav{gap:10px}
+  .page-nav a,.nav-drop summary{font-size:.78rem}
+}
+nav.tabs{background:var(--bill);border-top:1px solid rgba(255,255,255,.15)}
+.tabs-inner{display:flex;max-width:880px;margin:0 auto;overflow-x:auto}
+.tab-btn{flex:1;min-width:96px;background:none;border:none;color:rgba(255,255,255,.7);font-family:var(--sans);font-size:.92rem;font-weight:500;padding:12px 8px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:#fff}
+.tab-btn[aria-selected="true"]{color:#fff;border-bottom-color:var(--gold);font-weight:700}
+.tab-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+main{padding:34px 0 60px}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.panel-desc{color:var(--ink-soft);font-size:.94rem;margin-bottom:22px}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:720px){.calc-grid{grid-template-columns:1fr}}
+
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.86rem;font-weight:700;margin-bottom:6px}
+.field .hint{font-weight:400;color:var(--ink-soft);font-size:.78rem;margin-left:4px}
+.field input[type=number],.field select{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:1rem;background:#fff;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.field textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:.95rem;background:#fff;color:var(--ink);resize:vertical;min-height:160px;line-height:1.6}
+.field textarea[readonly]{background:var(--paper)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--bill-2);outline-offset:-1px;border-color:var(--bill-2)}
+.calc-btn{width:100%;padding:13px;background:var(--bill);color:#fff;border:none;border-radius:8px;
+  font-family:var(--sans);font-size:1.02rem;font-weight:700;cursor:pointer;margin-top:4px;transition:background .15s}
+.calc-btn:hover{background:var(--bill-2)}
+.calc-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.mini-btn{padding:9px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-family:var(--sans);font-size:.85rem;cursor:pointer;color:var(--ink)}
+.mini-btn:hover{background:var(--bill-tint);border-color:var(--bill-2);color:var(--bill)}
+
+.slip{background:var(--card);border:1px solid var(--bill);border-radius:var(--radius);overflow:hidden;position:relative}
+.slip::before{content:"";position:absolute;inset:5px;border:1px solid var(--bill-tint);border-radius:6px;pointer-events:none}
+.slip-head{background:var(--bill);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:baseline}
+.slip-head .t{font-size:.82rem;letter-spacing:.14em;font-weight:500}
+.slip-head .no{font-size:.72rem;opacity:.6;font-variant-numeric:tabular-nums}
+.slip-body{padding:20px}
+.slip-main{text-align:center;padding:10px 0 18px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+.slip-main .cap{font-size:.82rem;color:var(--ink-soft);letter-spacing:.1em;margin-bottom:2px}
+.slip-main .amount{font-family:var(--serif);font-size:2.2rem;font-weight:700;color:var(--bill);font-variant-numeric:tabular-nums;line-height:1.25;word-break:keep-all}
+.slip-main .amount .won{font-size:1.1rem;margin-left:2px;color:var(--ink-soft)}
+.slip-main .sub{font-size:.85rem;color:var(--ink-soft);margin-top:4px}
+.slip-rows{width:100%;border-collapse:collapse;font-size:.9rem}
+.slip-rows td{padding:7px 2px;border-bottom:1px solid #f0f2ee;font-variant-numeric:tabular-nums}
+.slip-rows td:last-child{text-align:right;font-weight:500}
+.slip-rows tr.total td{border-bottom:none;border-top:2px solid var(--line);font-weight:700;padding-top:10px}
+.slip-note{font-size:.76rem;color:var(--ink-soft);padding:10px 20px 16px;line-height:1.5}
+
+.ad-slot{margin:30px 0;min-height:90px;display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--line);border-radius:var(--radius);color:#b9beb5;font-size:.8rem;letter-spacing:.1em}
+
+.content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-top:30px}
+.content h2{font-family:var(--serif);font-size:1.25rem;margin-bottom:12px;color:var(--bill)}
+.content p{font-size:.93rem;color:var(--ink);margin-bottom:10px}
+.content ul{padding-left:22px;font-size:.93rem;margin-bottom:10px}
+.content li{margin-bottom:4px}
+
+footer{background:var(--ink);color:#aab3ad;font-size:.8rem;padding:26px 20px;text-align:center;line-height:1.7}
+footer strong{color:#d7ddd8}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <a class="logo" href="index.html">단숨<small>DANSUM</small></a>
+    <nav class="page-nav" aria-label="사이트 메뉴">
+      <details class="nav-drop">
+        <summary>계산기</summary>
+        <div class="drop-menu">
+          <a href="index.html">전체 도구</a>
+          <a href="finance.html">연봉·재무</a>
+          <a href="date.html">날짜·시간</a>
+          <a href="text.html" aria-current="page">텍스트·문서</a>
+          <a href="unit.html">단위 변환</a>
+          <a href="life.html">생활·건강</a>
+        </div>
+      </details>
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+  <nav class="tabs" aria-label="계산기 선택">
+    <div class="tabs-inner" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="count">글자수 세기</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="transform">텍스트 변환</button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<!-- ═══════════ 1. 글자수 세기 ═══════════ -->
+<section class="panel active" id="panel-count">
+  <h1 class="panel-title">글자수 세기</h1>
+  <p class="panel-desc">공백 포함·제외 글자수, 단어 수, 줄 수를 입력과 동시에 실시간으로 계산합니다.</p>
+
+  <div class="calc-grid">
+    <div class="form-card">
+      <div class="field">
+        <label for="cc-input">텍스트 입력</label>
+        <textarea id="cc-input" placeholder="여기에 글을 입력하거나 붙여넣으세요."></textarea>
+      </div>
+      <div class="field">
+        <label for="cc-limit">글자수 제한 <span class="hint">자기소개서 등, 없으면 0</span></label>
+        <input type="number" id="cc-limit" value="0" min="0" step="10">
+      </div>
+    </div>
+
+    <div class="slip" aria-live="polite">
+      <div class="slip-head"><span class="t">글자수 · 실시간</span><span class="no" id="cc-date"></span></div>
+      <div class="slip-body">
+        <div class="slip-main">
+          <div class="cap">공백 포함 글자수</div>
+          <div class="amount"><span id="cc-with">0</span><span class="won">자</span></div>
+          <div class="sub" id="cc-limit-info"></div>
+        </div>
+        <table class="slip-rows">
+          <tr><td>공백 제외 글자수</td><td id="cc-without">0자</td></tr>
+          <tr><td>단어 수</td><td id="cc-words">0개</td></tr>
+          <tr><td>줄 수</td><td id="cc-lines">0줄</td></tr>
+          <tr class="total"><td>바이트 (UTF-8)</td><td id="cc-bytes">0 byte</td></tr>
+        </table>
+      </div>
+      <div class="slip-note">※ 입력한 텍스트는 서버로 전송되지 않고 브라우저 안에서만 계산됩니다.</div>
+    </div>
+  </div>
+
+  <div class="ad-slot">AD</div>
+
+  <article class="content">
+    <h2>글자수, 왜 공백 포함/제외가 다를까?</h2>
+    <p>자기소개서, 논술, SNS 게시글 등은 매체마다 글자수 기준이 다릅니다. 보통 <strong>공백 포함 글자수</strong>를 기준으로 안내하는 경우가 많지만, 일부 채용 사이트는 공백을 제외하고 세기도 합니다. 제출 전 해당 매체의 기준을 반드시 확인하세요.</p>
+  </article>
+</section>
+
+<!-- ═══════════ 2. 텍스트 변환 ═══════════ -->
+<section class="panel" id="panel-transform">
+  <h1 class="panel-title">텍스트 변환</h1>
+  <p class="panel-desc">대소문자 변환, 공백·줄바꿈 정리를 한 번에 처리하고 결과를 복사합니다.</p>
+
+  <div class="form-card">
+    <div class="field">
+      <label for="tf-input">원본 텍스트</label>
+      <textarea id="tf-input" placeholder="변환할 텍스트를 입력하세요."></textarea>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="mini-btn" data-type="upper">대문자로</button>
+      <button type="button" class="mini-btn" data-type="lower">소문자로</button>
+      <button type="button" class="mini-btn" data-type="trim">앞뒤 공백 제거</button>
+      <button type="button" class="mini-btn" data-type="collapse">중복 공백 정리</button>
+      <button type="button" class="mini-btn" data-type="nolinebreak">줄바꿈 제거</button>
+    </div>
+    <div class="field">
+      <label for="tf-output">결과</label>
+      <textarea id="tf-output" readonly placeholder="위 버튼을 누르면 결과가 여기에 표시됩니다."></textarea>
+    </div>
+    <button class="calc-btn" id="tf-copy">결과 복사하기</button>
+  </div>
+
+  <div class="ad-slot">AD</div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>단숨</strong> · 입력한 텍스트는 저장되지 않으며 브라우저 안에서만 처리됩니다.<br>
+    <a href="index.html">전체 도구</a> · <a href="about.html">소개</a> · <a href="privacy-policy.html">개인정보처리방침</a> · <a href="terms.html">이용약관</a> · <a href="contact.html">문의</a>
+  </div>
+</footer>
+
+<script>
+const set = (id, v) => document.getElementById(id).textContent = v;
+const today = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+set('cc-date', 'NO. ' + today);
+
+/* ── 탭 전환 ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0});
+  });
+});
+
+/* ══════════ 1. 글자수 세기 ══════════ */
+function updateCount() {
+  const text = document.getElementById('cc-input').value;
+  const withSpace = text.length;
+  const withoutSpace = text.replace(/\s/g, '').length;
+  const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  const lines = text === '' ? 0 : text.split(/\n/).length;
+  const bytes = new TextEncoder().encode(text).length;
+
+  set('cc-with', withSpace.toLocaleString());
+  set('cc-without', withoutSpace.toLocaleString() + '자');
+  set('cc-words', words.toLocaleString() + '개');
+  set('cc-lines', lines.toLocaleString() + '줄');
+  set('cc-bytes', bytes.toLocaleString() + ' byte');
+
+  const limit = Number(document.getElementById('cc-limit').value) || 0;
+  if (limit > 0) {
+    const remain = limit - withSpace;
+    set('cc-limit-info', remain >= 0 ? '제한까지 ' + remain.toLocaleString() + '자 남음' : (Math.abs(remain)).toLocaleString() + '자 초과');
+  } else {
+    set('cc-limit-info', '');
+  }
+}
+document.getElementById('cc-input').addEventListener('input', updateCount);
+document.getElementById('cc-limit').addEventListener('input', updateCount);
+
+/* ══════════ 2. 텍스트 변환 ══════════ */
+document.querySelectorAll('.mini-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    let text = document.getElementById('tf-input').value;
+    switch (btn.dataset.type) {
+      case 'upper': text = text.toUpperCase(); break;
+      case 'lower': text = text.toLowerCase(); break;
+      case 'trim': text = text.trim(); break;
+      case 'collapse': text = text.replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n'); break;
+      case 'nolinebreak': text = text.replace(/\r?\n/g, ' '); break;
+    }
+    document.getElementById('tf-output').value = text;
+  });
+});
+
+document.getElementById('tf-copy').addEventListener('click', async () => {
+  const out = document.getElementById('tf-output');
+  const btn = document.getElementById('tf-copy');
+  try {
+    await navigator.clipboard.writeText(out.value);
+  } catch (e) {
+    out.removeAttribute('readonly');
+    out.select();
+    document.execCommand('copy');
+    out.setAttribute('readonly', 'true');
+  }
+  const original = btn.textContent;
+  btn.textContent = '복사됨!';
+  setTimeout(() => { btn.textContent = original; }, 1200);
+});
+
+/* 첫 화면 계산 */
+updateCount();
+</script>
+</body>
+</html>
